@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narra | Média de récits contemporains</title>
+    <link rel="icon" type="image/png" href="assets/img/logo/favicon.png">
+    <link rel="stylesheet" href="src/css/style.css">
+    
+</head>
+<body class="narra-paper-theme">
+
+    <div class="bg-system">
+        <div class="ray ray-primary" id="ray1"></div>
+        <div class="ray ray-secondary" id="ray2"></div>
+        <div class="noise-overlay"></div>
+        <div class="paper-grain"></div>
+        <div class="fiber-texture"></div>
+        <div class="ink-stains"></div>
+    </div>
+
+    <nav class="site-nav" id="mainNavbar">
+        <div class="container nav-flex">
+            <div class="nav-section left">
+                <a href="index.html" class="nav-item active">ACCUEIL</a>
+                <a href="pages/episodes.html" class="nav-item">ÉPISODES</a>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/logo/logo_narra.png" alt="Narra" class="main-logo-img">
+                </a>
+            </div>
+            <div class="nav-section right">
+                <a href="pages/a-propos.html" class="nav-item">À PROPOS</a>
+                <a href="pages/contact.html" class="nav-item">CONTACT</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-full reveal">
+        <div class="container hero-inner">
+            <div class="hero-text-wrap">
+                <span class="hero-tag font-comment">NARRA MÉDIA</span>
+                <h1 class="hero-main-title title-3d">Donner la parole autrement.</h1>
+                <p class="hero-description font-corpus">Espace de décryptage des enjeux de notre temps, Narra met en lumière des parcours hors normes et des expertises du quotidien à travers le récit lent.</p>
+                <div class="hero-btn-group">
+                    <button class="btn-primary-large paper-lift" onclick="playAudio('Le sens du parcours', 'Sarah El Mansouri', 'assets/audio/ep1.mp3')">ÉCOUTER LE DERNIER RÉCIT</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-engine">
+
+        <div class="torn-divider-container">
+            <img src="assets/sheet/1.png" alt="" class="tear-top">
+        </div>
+
+        <section class="section-episodes color-section-ivoire reveal">
+            <div class="container">
+                <div class="flex-header">
+                    <h2 class="title-broadway title-3d">DERNIERS ÉPISODES</h2>
+                    <a href="pages/episodes.html" class="btn-stamp">VOIR TOUT</a>
+                </div>
+                <div class="episodes-chaotic-grid" id="episodes-container"></div>
+            </div>
+        </section>
+
+        <div class="torn-divider-container">
+            <img src="assets/sheet/2.png" alt="" class="tear-bottom">
+        </div>
+
+        <section class="section-analyses color-section-brun reveal">
+            <div class="container">
+                <h2 class="title-broadway centered light-text title-3d">DERNIERS ARTICLES</h2>
+                <div class="articles-list-premium" id="articles-container"></div>
+            </div>
+        </section>
+
+        <div class="torn-divider-container">
+            <img src="assets/sheet/1.png" alt="" class="tear-top">
+        </div>
+
+        <section id="manifeste" class="section-manifeste color-section-sable reveal">
+            <div class="container grid-manifeste">
+                <div class="manifeste-content">
+                    <h2 class="label-section">L'INTENTION</h2>
+                    <h3 class="manifeste-title title-3d">Un laboratoire de récits immersifs.</h3>
+                    <p class="manifeste-text font-corpus">Narra est né d'une volonté simple : redonner du temps à l'écoute. Nous ne traitons pas l'actualité chaude, nous capturons l'essence des trajectoires de vie.</p>
+                    <p class="font-comment">Chaque épisode est une immersion sonore et textuelle dans une réalité singulière.</p>
+                    <div class="manifeste-footer">
+                        <a href="pages/a-propos.html" class="btn-editorial">NOTRE HISTOIRE →</a>
+                    </div>
+                </div>
+                <div class="manifeste-visual">
+                    <div class="visual-container paper-sheet">
+                        <div class="visual-placeholder">
+                            <img src="assets/img/photos/nous.png" alt="Qui sommes-nous" class="about-image-internal">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="torn-divider-container">
+            <img src="assets/sheet/1.png" alt="" class="tear-top">
+        </div>
+
+        <section class="section-newsletter color-section-ivoire reveal">
+            <div class="container newsletter-vertical-padding">
+                <div class="newsletter-block paper-sheet-alt">
+                    <div class="news-text">
+                        <h2 class="broadway title-3d">RESTEZ À L'ÉCOUTE</h2>
+                        <p class="goudy font-corpus">Chaque dimanche, recevez notre sélection de récits et analyses exclusives directement dans votre boîte mail.</p>
+                        <p class="font-comment">Rejoignez notre communauté de lecteurs engagés.</p>
+                    </div>
+                    <form class="news-form" id="newsForm">
+                        <div class="news-input-wrap">
+                            <input type="email" placeholder="votre@email.com" class="goudy paper-input" required>
+                            <button type="submit" class="btn-news-submit">S'ABONNER</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+        <div class="torn-divider-container">
+            <img src="assets/sheet/2.png" alt="" class="tear-bottom">
+        </div>
+
+    <footer class="site-footer">
+        <div class="container footer-flex">
+            <div class="footer-copy">
+                <p class="font-comment">&copy; 2026 Narra Média. <span class="legal-trigger" onclick="openLegal()">Mentions légales</span></p>
+            </div>
+            <div class="footer-socials">
+                <a href="#" class="social-link"><img src="assets/img/icons/instagram.png" alt="Instagram"></a>
+                <a href="#" class="social-link"><img src="assets/img/icons/spotify.png" alt="Spotify"></a>
+                <a href="#" class="social-link"><img src="assets/img/icons/youtube.png" alt="YouTube"></a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="legalModal" class="modal-backdrop" onclick="closeLegalOnDim(event)">
+        <div class="modal-box paper-sheet">
+            <button class="modal-close-btn" onclick="closeLegal()">&times;</button>
+            <h2 class="broadway title-3d">MENTIONS LÉGALES</h2>
+            <div class="modal-content-scroll font-corpus">
+                <p>Narra Média 2026 - Tous droits réservés.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="audioPlayer" class="player-widget post-it-style">
+        <div class="post-it-pin"></div>
+        <button class="close-cross" onclick="stopPlayer()" title="Fermer">&times;</button>
+        <div class="player-top" onclick="expandPlayer()">
+            <div class="player-track-data">
+                <b id="trackTitle" class="broadway">TITRE DU RÉCIT</b>
+                <span id="trackAuthor" class="font-comment">Nom de l'auteur</span>
+            </div>
+            <div class="player-controls-main">
+                <button class="p-ctrl-btn" onclick="event.stopPropagation(); prevTrack()">«</button>
+                <button class="p-ctrl-btn play-main" onclick="event.stopPropagation(); togglePlayback()" id="playIcon">PLAY</button>
+                <button class="p-ctrl-btn" onclick="event.stopPropagation(); nextTrack()">»</button>
+            </div>
+        </div>
+        <div class="player-expanded-zone" id="expandArea">
+            <div class="progress-wrap">
+                <span class="time-display font-comment" id="currentTime">00:00</span>
+                <div class="progress-container">
+                    <input type="range" id="audioRange" value="0" min="0" max="100" class="custom-slider">
+                </div>
+                <span class="time-display font-comment" id="durationTime">00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <audio id="coreAudio"></audio>
+    <script src="src/js/main.js"></script>
+</body>
+</html>
