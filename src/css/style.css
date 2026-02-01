@@ -147,9 +147,10 @@ body {
 .nav-section.right { justify-content: flex-end; }
 
 .main-logo-img {
-    height: 105px; width: auto; 
+    height: 85px; width: auto; 
     transition: transform 0.6s var(--ease-paper);
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.06));
+    transform-origin: center;
 }
 
 .logo-link:hover .main-logo-img { transform: scale(1.05) rotate(-2deg); }
@@ -369,13 +370,20 @@ body {
 /* 11. PLAYER POST-IT                                                        */
 /* -------------------------------------------------------------------------- */
 .player-widget.post-it-style {
-    position: fixed; bottom: 35px; right: 40px; width: 330px;
-    background: var(--postit-jaune); padding: 22px; border-radius: 1px;
-    box-shadow: 12px 12px 0px rgba(0,0,0,0.05); transform: rotate(1.5deg) translateY(280%);
-    z-index: 2000; transition: 0.7s var(--ease-paper);
+    position: fixed; 
+    bottom: 35px; 
+    right: 40px; 
+    width: 330px;
+    background: var(--postit-jaune); 
+    padding: 22px; 
+    border-radius: 1px;
+    box-shadow: 12px 12px 0px rgba(0,0,0,0.05); 
+    transform: rotate(1.5deg) translateY(350%); /* Augmentation pour être bien caché */
+    z-index: 2000; 
+    transition: 0.7s var(--ease-paper);
 }
 
-.player-widget.active { transform: rotate(1.5deg) translateY(0); }
+.player-widget.active { transform: rotate(1.5deg) translateY(0) !important; }
 .player-widget.expanded { width: 420px; transform: rotate(0deg); }
 
 .close-cross {
@@ -424,7 +432,10 @@ body {
     .site-nav { height: var(--nav-h) !important; }
     .nav-flex { padding: 0 20px; }
     .nav-section { display: none; }
-    .main-logo-img { height: 45px; }
+    
+    /* Correction taille logo mobile */
+    .main-logo-img { height: 50px !important; } 
+
     .container { padding: 0 20px; }
     .hero-full { height: auto; padding: 140px 0 80px; }
     .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
@@ -442,8 +453,18 @@ body {
     .newsletter-block { padding: 40px 20px; transform: none; }
     .news-input-wrap { flex-direction: column; }
     .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
-    .player-widget.post-it-style { width: 100%; right: 0; bottom: 0; left: 0; border-radius: 15px 15px 0 0; transform: translateY(100%); rotate: 0deg !important; }
-    .player-widget.active { transform: translateY(0); }
+    
+    /* Correction Post-it mobile */
+    .player-widget.post-it-style { 
+        width: 100%; 
+        right: 0; 
+        bottom: 0; 
+        left: 0; 
+        border-radius: 15px 15px 0 0; 
+        transform: translateY(110%) !important; /* Bien sorti de l'écran */
+        rotate: 0deg !important; 
+    }
+    .player-widget.active { transform: translateY(0) !important; }
     .modal-box { padding: 40px 20px; }
 }
 
@@ -470,7 +491,6 @@ body {
     z-index: 1;
 }
 
-/* Styles pour le bouton Burger */
 .mobile-burger {
     display: none;
     flex-direction: column;
@@ -491,12 +511,9 @@ body {
 
 @media (max-width: 768px) {
     .mobile-burger { display: flex; }
-
-    /* Animation quand le menu est ouvert */
     .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
     .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
 
-    /* Transformation des sections en menu plein écran */
     .nav-section {
         display: flex;
         position: fixed;
@@ -515,7 +532,7 @@ body {
     }
 
     .nav-section.open { transform: translateX(0); }
-    .nav-section.right { display: none; } /* On fusionne tout dans 'left' pour le mobile */
+    .nav-section.right { display: none; }
 }
 
 @keyframes rotationLogo {
@@ -524,9 +541,6 @@ body {
 }
 
 .main-logo-img {
-    height: 105px; 
-    width: auto; 
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.06));
-    /* Ajoute ces lignes */
-    animation: rotationLogo 10s linear infinite; 
+    animation: rotationLogo 15s linear infinite; 
 }
