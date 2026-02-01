@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // Variable pour suivre l'index de l'épisode en cours de lecture
     let currentTrackIndex = -1;
 
     // 3. MOTEUR DE RENDU UI
@@ -104,13 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. GESTION DU SCROLL
     const initScrollAnimations = () => {
-        document.querySelectorAll('.reveal').forEach(el => {
-            el.classList.add('visible');
-        });
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        
+        reveals.forEach(el => observer.observe(el));
     };
 
-    // 5. EFFETS DE PARALLAXE
+    // 5. EFFETS DE PARALLAXE (Désactivé sur mobile pour la performance)
     const initParallaxBackground = () => {
+        if (window.innerWidth < 768) return;
         const ray1 = document.getElementById('ray1');
         const ray2 = document.getElementById('ray2');
         window.addEventListener('mousemove', (e) => {
@@ -141,8 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.playAudio = (title, author, src) => {
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
-
-        // On met à jour l'index actuel en cherchant dans la liste
         currentTrackIndex = episodesData.findIndex(ep => ep.audio === src);
 
         if (!coreAudio.src.includes(src)) {
@@ -156,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(() => console.log("Lecture bloquée"));
     };
 
-    // Fonction pour passer à l'épisode suivant
     window.nextTrack = () => {
         if (episodesData.length === 0) return;
         currentTrackIndex = (currentTrackIndex + 1) % episodesData.length;
@@ -164,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.playAudio(track.title, track.author, track.audio);
     };
 
-    // Fonction pour revenir à l'épisode précédent
     window.prevTrack = () => {
         if (episodesData.length === 0) return;
         currentTrackIndex = (currentTrackIndex - 1 + episodesData.length) % episodesData.length;
@@ -208,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 7. MENTIONS LÉGALES & MODALES
+    // 7. MENTIONS LÉGALES
     window.openLegal = () => {
         const modal = document.getElementById('legalModal');
         if (modal) {
@@ -233,19 +234,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.id === 'legalModal') closeLegal();
     };
 
-    // 8. NAVIGATION
-    const handleNavbarScroll = () => {
+    // 8. NAVIGATION & BURGER MENU
+    const handleNavbar = () => {
         const nav = document.getElementById('mainNavbar');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const navLeft = document.querySelector('.nav-section.left');
+        const navLinks = document.querySelectorAll('.nav-item');
+
         window.addEventListener('scroll', () => {
             if (nav) {
                 if (window.scrollY > 80) {
-                    nav.style.height = "90px";
+                    nav.style.height = window.innerWidth > 768 ? "90px" : "70px";
                     nav.style.background = "rgba(253, 245, 230, 0.98)";
                 } else {
-                    nav.style.height = "120px";
+                    nav.style.height = window.innerWidth > 768 ? "120px" : "80px";
                     nav.style.background = "rgba(253, 245, 230, 0.75)";
                 }
             }
+        });
+
+        if (burgerBtn && navLeft) {
+            burgerBtn.addEventListener('click', () => {
+                burgerBtn.classList.toggle('open');
+                navLeft.classList.toggle('open');
+                document.body.style.overflow = navLeft.classList.contains('open') ? 'hidden' : 'auto';
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                burgerBtn?.classList.remove('open');
+                navLeft?.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
         });
     };
 
@@ -265,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 10. EFFETS VISUELS FINAUX
     const injectTornEffects = () => {
+        if (window.innerWidth < 768) return; // Moins de rotations sur mobile pour garder la lisibilité
         document.querySelectorAll('.paper-sheet, .paper-sheet-alt').forEach(sheet => {
             const rot = (Math.random() * 4 - 2).toFixed(2);
             sheet.style.transform = `rotate(${rot}deg)`;
@@ -275,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderUI();
     initScrollAnimations();
     initParallaxBackground();
-    handleNavbarScroll();
+    handleNavbar();
     initNewsletter();
     injectTornEffects();
 });

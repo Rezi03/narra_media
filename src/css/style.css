@@ -39,6 +39,16 @@ body, p, .goudy, .font-corpus {
                  4px 4px 10px rgba(0,0,0,0.05);
 }
 
+.mobile-only {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .nav-section.left.open .mobile-only {
+        display: block !important;
+    }
+}
+
 /* -------------------------------------------------------------------------- */
 /* 1. VARIABLES D'ARCHITECTURE                                                */
 /* -------------------------------------------------------------------------- */
@@ -458,4 +468,65 @@ body {
     background-color: var(--ivoire);
     position: relative;
     z-index: 1;
+}
+
+/* Styles pour le bouton Burger */
+.mobile-burger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2001;
+}
+
+.mobile-burger span {
+    display: block;
+    width: 30px;
+    height: 3px;
+    background-color: var(--brun);
+    transition: 0.3s;
+}
+
+@media (max-width: 768px) {
+    .mobile-burger { display: flex; }
+
+    /* Animation quand le menu est ouvert */
+    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
+
+    /* Transformation des sections en menu plein écran */
+    .nav-section {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--ivoire);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        transform: translateX(100%);
+        transition: transform 0.5s var(--ease-paper);
+        z-index: 2000;
+    }
+
+    .nav-section.open { transform: translateX(0); }
+    .nav-section.right { display: none; } /* On fusionne tout dans 'left' pour le mobile */
+}
+
+@keyframes rotationLogo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.main-logo-img {
+    height: 105px; 
+    width: auto; 
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.06));
+    /* Ajoute ces lignes */
+    animation: rotationLogo 10s linear infinite; 
 }
