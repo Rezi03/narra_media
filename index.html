@@ -28,8 +28,6 @@
             <div class="nav-section left">
                 <a href="index.html" class="nav-item active">ACCUEIL</a>
                 <a href="pages/episodes.html" class="nav-item">ÉPISODES</a>
-                <a href="pages/a-propos.html" class="nav-item mobile-only">À PROPOS</a>
-                <a href="pages/contact.html" class="nav-item mobile-only">CONTACT</a>
             </div>
 
             <div class="nav-center">
@@ -45,7 +43,7 @@
         </div>
     </nav>
 
-    <header class="hero-full reveal">
+    <header class="hero-full reveal" style="position: relative; overflow: visible; z-index: 1;">
         <div class="container hero-inner">
             <div class="hero-text-wrap">
                 <span class="hero-tag font-comment">NARRA MÉDIA</span>
@@ -60,24 +58,28 @@
 
     <main class="content-engine">
 
-        <section class="section-episodes color-section-ivoire reveal">
-            <div class="container">
-                <div class="flex-header">
-                    <h2 class="title-broadway title-3d">DERNIERS ÉPISODES</h2>
-                    <a href="pages/episodes.html" class="btn-stamp">VOIR TOUT</a>
-                </div>
-                <div class="episodes-chaotic-grid" id="episodes-container"></div>
-            </div>
-        </section>
+<section class="section-episodes color-section-ivoire reveal" style="position: relative; z-index: 10;">
+    <div class="torn-divider divider-top"></div>
+    <div class="container">
+        <div class="flex-header">
+            <h2 class="title-broadway title-3d">DERNIERS ÉPISODES</h2>
+            <a href="pages/episodes.html" class="btn-stamp">VOIR TOUT</a>
+        </div>
+        <div class="episodes-chaotic-grid" id="episodes-container"></div>
+    </div>
+    <div class="torn-divider divider-bottom"></div>
+</section>
 
-        <section class="section-analyses color-section-brun reveal">
-            <div class="container">
-                <h2 class="title-broadway centered light-text title-3d">DERNIERS ARTICLES</h2>
-                <div class="articles-list-premium" id="articles-container"></div>
-            </div>
-        </section>
+<section class="section-analyses color-section-brun reveal" style="position: relative; overflow: visible; z-index: 3;">
+    <div class="container">
+        <h2 class="title-broadway centered light-text title-3d">DERNIERS ARTICLES</h2>
+        <div class="articles-list-premium" id="articles-container"></div>
+    </div>
+    <div class="torn-divider divider-bottom"></div>
+</section>
 
-        <section id="manifeste" class="section-manifeste color-section-sable reveal">
+        <section id="manifeste" class="section-manifeste color-section-sable reveal" style="position: relative; overflow: visible; z-index: 4;">
+            <div class="torn-divider divider-top"></div>
             <div class="container grid-manifeste">
                 <div class="manifeste-content">
                     <h2 class="label-section">L'INTENTION</h2>
@@ -98,7 +100,8 @@
             </div>
         </section>
 
-        <section class="section-newsletter color-section-ivoire reveal">
+        <section class="section-newsletter color-section-ivoire reveal" style="position: relative; z-index: 5;">
+            <div class="torn-divider divider-top"></div>
             <div class="container newsletter-vertical-padding">
                 <div class="newsletter-block paper-sheet-alt">
                     <div class="news-text">
@@ -118,7 +121,7 @@
 
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer" style="position: relative; z-index: 6;">
         <div class="container footer-flex">
             <div class="footer-copy">
                 <p class="font-comment">&copy; 2026 Narra Média. <span class="legal-trigger" onclick="openLegal()">Mentions légales</span></p>
@@ -131,7 +134,7 @@
         </div>
     </footer>
 
-    <div id="legalModal" class="modal-backdrop" onclick="closeLegalOnDim(event)">
+    <div id="legalModal" class="modal-backdrop" style="z-index: 1000;" onclick="closeLegalOnDim(event)">
         <div class="modal-box paper-sheet">
             <button class="modal-close-btn" onclick="closeLegal()">&times;</button>
             <h2 class="broadway title-3d">MENTIONS LÉGALES</h2>
@@ -141,7 +144,7 @@
         </div>
     </div>
 
-    <div id="audioPlayer" class="player-widget post-it-style">
+    <div id="audioPlayer" class="player-widget post-it-style" style="z-index: 999;">
         <div class="post-it-pin"></div>
         <button class="close-cross" onclick="stopPlayer()" title="Fermer">&times;</button>
         <div class="player-top" onclick="expandPlayer()">

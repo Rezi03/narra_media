@@ -683,6 +683,45 @@ textarea {
 
 
 
+/* 1. Reset de l'overflow pour permettre aux déchirures de déborder */
+.content-engine section {
+    overflow: visible !important;
+    position: relative;
+}
 
+/* 2. Base commune des dividers */
+.torn-divider {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px; /* Augmenté pour plus de visibilité */
+    pointer-events: none;
+    z-index: 20;
+}
 
+/* 3. Déchirure en HAUT d'une section */
+.divider-top {
+    top: -59px; /* On le plaque juste au dessus */
+    background-color: inherit; /* Prend la couleur de la section qui commence */
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L1200,120 L1200,40 C1050,90 950,10 850,70 C750,120 650,20 550,80 C450,110 350,30 250,90 C150,120 50,40 0,80 Z" fill="black"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L1200,120 L1200,40 C1050,90 950,10 850,70 C750,120 650,20 550,80 C450,110 350,30 250,90 C150,120 50,40 0,80 Z" fill="black"/></svg>');
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
 
+/* 4. Déchirure en BAS d'une section (Le cas qui pose problème) */
+.divider-bottom {
+    bottom: -59px; /* On le fait déborder sur la section du dessous */
+    background-color: inherit; /* Utilise le BRUN de la section analyses */
+    
+    /* On utilise un SVG déjà orienté vers le bas pour éviter les bugs de rotation */
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0 L1200,0 L1200,80 C1050,30 950,110 850,50 C750,0 650,100 550,40 C450,10 350,90 250,30 C150,0 50,80 0,40 Z" fill="black"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0 L1200,0 L1200,80 C1050,30 950,110 850,50 C750,0 650,100 550,40 C450,10 350,90 250,30 C150,0 50,80 0,40 Z" fill="black"/></svg>');
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+/* 5. Ajustement spécifique pour la section Brune */
+.section-analyses {
+    z-index: 5 !important; /* Doit être au dessus de la section suivante pour que sa déchirure soit visible */
+}
