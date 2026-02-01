@@ -364,7 +364,46 @@ body {
     background: var(--ivoire); padding: 70px; width: 90%; max-width: 550px; position: relative; 
     border-radius: 25px;
 }
-.modal-close-btn { position: absolute; top: 15px; right: 20px; border: none; background: none; font-size: 2.2rem; cursor: pointer; }
+.modal-close-btn { 
+    position: absolute; 
+    top: 15px; 
+    right: 20px; 
+    border: none; 
+    background: none; 
+    font-size: 2.2rem; 
+    cursor: pointer; 
+    color: var(--brun) !important; 
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.player-widget.post-it-style {
+    position: fixed; 
+    bottom: 35px; 
+    right: 40px; 
+    width: 330px;
+    background: var(--postit-jaune); 
+    padding: 22px; 
+    border-radius: 1px;
+    box-shadow: 12px 12px 0px rgba(0,0,0,0.05); 
+    transform: translateY(400%) rotate(1.5deg); 
+    z-index: 2000; 
+    transition: 0.7s var(--ease-paper);
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .player-widget.post-it-style { 
+        width: 100%; 
+        right: 0; 
+        bottom: 0; 
+        left: 0; 
+        border-radius: 15px 15px 0 0; 
+        transform: translateY(150%) !important;
+        rotate: 0deg !important; 
+        display: none; 
+    }
+}
 
 /* -------------------------------------------------------------------------- */
 /* 11. PLAYER POST-IT                                                        */

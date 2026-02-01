@@ -144,11 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.playAudio = (title, author, src) => {
-        // Sécurité : Réafficher le widget s'il a été fermé avec stopPlayer()
+        const playerWidget = document.getElementById('audioPlayer');
+
         playerWidget.style.display = "block";
+
+        setTimeout(() => {
+            playerWidget.classList.add('active');
+        }, 10);
 
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
+        
         currentTrackIndex = episodesData.findIndex(ep => ep.audio === src);
 
         if (!coreAudio.src.includes(src)) {
@@ -156,9 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
             coreAudio.load();
         }
 
-        playerWidget.classList.add('active');
         coreAudio.play().then(() => {
-            playIcon.innerHTML = "<span>PAUSE</span>";
+            const playIcon = document.getElementById('playIcon');
+            if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
         }).catch(() => console.log("Lecture bloquée"));
     };
 
