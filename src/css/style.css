@@ -130,12 +130,36 @@ body {
 /* -------------------------------------------------------------------------- */
 /* 5. NAVIGATION                                                              */
 /* -------------------------------------------------------------------------- */
+/* Navigation de base */
 .site-nav {
-    position: fixed; top: 0; width: 100%; height: var(--nav-h);
-    background: rgba(253, 245, 230, 0.8);
-    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    z-index: 1000; border-bottom: 1px solid rgba(62, 39, 35, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: var(--nav-h);
+    background: rgba(253, 245, 230, 0.85); /* Ivoire légèrement plus opaque */
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(62, 39, 35, 0.05);
     transition: height 0.6s var(--ease-paper);
+    /* Ajout critique pour mobile */
+    padding-top: env(safe-area-inset-top); 
+}
+
+@media (max-width: 768px) {
+    :root { --nav-h: 70px; } /* Un peu plus compact sur mobile */
+    
+    .site-nav { 
+        height: auto !important; /* Laisse le padding-top et le logo dicter la hauteur */
+        min-height: var(--nav-h);
+    }
+    
+    .nav-flex { 
+        padding: 0 15px; 
+        justify-content: space-between; 
+    }
 }
 
 .nav-flex {
@@ -681,47 +705,87 @@ textarea {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M16 8 L16 24 M12 8 L20 8 M12 24 L20 24' stroke='%233E2723' stroke-width='2'/%3E%3C/svg%3E") 16 16, text;
 }
 
-
-
-/* 1. Reset de l'overflow pour permettre aux déchirures de déborder */
 .content-engine section {
     overflow: visible !important;
     position: relative;
 }
 
-/* 2. Base commune des dividers */
 .torn-divider {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 60px; /* Augmenté pour plus de visibilité */
+    height: 60px;
     pointer-events: none;
     z-index: 20;
+
+    filter: drop-shadow(0 15px 10px rgba(0,0,0,0.15)) 
+            drop-shadow(0 5px 2px rgba(0,0,0,0.1));
 }
 
-/* 3. Déchirure en HAUT d'une section */
 .divider-top {
-    top: -59px; /* On le plaque juste au dessus */
-    background-color: inherit; /* Prend la couleur de la section qui commence */
+    top: -59px;
+    background-color: inherit;
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L1200,120 L1200,40 C1050,90 950,10 850,70 C750,120 650,20 550,80 C450,110 350,30 250,90 C150,120 50,40 0,80 Z" fill="black"/></svg>');
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,120 L1200,120 L1200,40 C1050,90 950,10 850,70 C750,120 650,20 550,80 C450,110 350,30 250,90 C150,120 50,40 0,80 Z" fill="black"/></svg>');
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
 }
 
-/* 4. Déchirure en BAS d'une section (Le cas qui pose problème) */
 .divider-bottom {
-    bottom: -59px; /* On le fait déborder sur la section du dessous */
-    background-color: inherit; /* Utilise le BRUN de la section analyses */
-    
-    /* On utilise un SVG déjà orienté vers le bas pour éviter les bugs de rotation */
+    bottom: -59px;
+    background-color: inherit;
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0 L1200,0 L1200,80 C1050,30 950,110 850,50 C750,0 650,100 550,40 C450,10 350,90 250,30 C150,0 50,80 0,40 Z" fill="black"/></svg>');
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0 L1200,0 L1200,80 C1050,30 950,110 850,50 C750,0 650,100 550,40 C450,10 350,90 250,30 C150,0 50,80 0,40 Z" fill="black"/></svg>');
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
 }
 
-/* 5. Ajustement spécifique pour la section Brune */
 .section-analyses {
-    z-index: 5 !important; /* Doit être au dessus de la section suivante pour que sa déchirure soit visible */
+    z-index: 5 !important;
 }
+
+.paper-fold {
+    position: relative;
+}
+
+.paper-fold::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.03) 50%, transparent);
+    box-shadow: 0 -1px 2px rgba(255,255,255,0.5);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hero-tag {
+    display: inline-block;
+    margin: 0 auto 30px;  
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid var(--terracotta); 
+    
+    width: 0; 
+    animation: 
+        typing 2s steps(11, end) forwards,
+        blink-caret .75s step-end infinite;
+    
+    letter-spacing: 8px;
+    font-weight: bold;
+    color: var(--terracotta);
+    text-align: center;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 14.5em; } 
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--terracotta); }
+}
+
