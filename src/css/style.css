@@ -5,7 +5,6 @@
 @font-face { font-family: 'Goudy Type'; src: url('../../assets/fonts/sous-titres.ttf'); }
 @font-face { font-family: 'Angsana New'; src: url('../../assets/fonts/corpus.ttf'); }
 
-/* Hiérarchie Broadway : Titres */
 .broadway, h1, h2, .title-broadway, .font-title, .btn-primary-large, .btn-stamp, .analysis-link, .btn-news-submit, #trackTitle { 
     font-family: 'Broadway', sans-serif; 
     text-transform: uppercase; 
@@ -16,18 +15,16 @@ h1 { font-size: clamp(1.7rem, 6.7vw, 4.2rem); }
 .manifeste-title { font-size: 1.9rem; }
 .news-text h2 { font-size: 2.5rem; }
 
-/* Hiérarchie Goudy : Sous-titres & Corpus (Angsana pour le texte pur) */
 .label-section, .nav-item, h3, .font-subtitle { 
     font-family: 'Goudy Type', serif; 
     font-weight: bold; 
 }
 
 body, p, .goudy, .font-corpus { 
-    font-family: 'Angsana New', serif; /* Utilisation de la police Corpus dédiée */
+    font-family: 'Angsana New', serif;
     font-size: 1.6rem; 
 }
 
-/* Commentaires : Goudy Type Italique, Gris, Petit */
 .font-comment, .hero-tag, .ep-meta { 
     font-family: 'Goudy Type', serif !important; 
     font-style: italic !important; 
@@ -53,13 +50,10 @@ body, p, .goudy, .font-corpus {
     --ivoire: #FDF5E6;
     --gris-comm: #757575;
     --postit-jaune: #FFF9C4;
-    
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-paper: cubic-bezier(0.23, 1, 0.32, 1);
-    
     --nav-h: 120px;
     --max-w: 1440px;
-    
     --shadow-light: 0 10px 30px rgba(62, 39, 35, 0.08);
     --shadow-deep: 0 40px 100px rgba(62, 39, 35, 0.15);
 }
@@ -274,7 +268,7 @@ body {
     text-decoration: none; color: var(--terracotta);
     border: 2.5px dashed var(--terracotta); 
     padding: 10px 25px; transition: 0.3s;
-    border-radius: 50px; /* Ajout de l'arondes (arrondi complet) */
+    border-radius: 50px;
     font-size: 0.9rem;
 }
 .btn-stamp:hover { background: var(--terracotta); color: white; border-style: solid; }
@@ -294,17 +288,14 @@ body {
 
 .article-row:hover { transform: translateX(40px); color: var(--terracotta); }
 .analysis-title {
-    font-family: 'Broadway', sans-serif; /* Assure la police Broadway */
-    font-size: 2.2rem; /* Taille harmonisée avec tes nouveaux réglages */
+    font-family: 'Broadway', sans-serif;
+    font-size: 2.2rem;
     line-height: 1.1;
     margin: 0 50px;
     text-transform: uppercase;
-    
-    /* Application de l'effet 3D identique au titre principal */
     text-shadow: 1px 1px 0px var(--ivoire), 
                  2px 2px 0px rgba(177, 79, 51, 0.15), 
                  4px 4px 10px rgba(0,0,0,0.05);
-    
     transition: transform 0.6s var(--ease-paper);
 }
 
@@ -331,8 +322,8 @@ body {
 }
 
 .btn-news-submit {
-    background: var(--ivoire); /* Fond ivoire pour éviter le ton sur ton sur le bloc brun */
-    color: var(--brun);        /* Texte brun pour le contraste */
+    background: var(--ivoire);
+    color: var(--brun);
     border: 2px solid var(--terracotta); 
     padding: 22px 55px;
     border-radius: 100px; cursor: pointer; transition: 0.4s var(--ease-paper);
@@ -360,7 +351,7 @@ body {
 }
 .modal-box { 
     background: var(--ivoire); padding: 70px; width: 90%; max-width: 550px; position: relative; 
-    border-radius: 25px; /* Arrondissement des mentions légales */
+    border-radius: 25px;
 }
 .modal-close-btn { position: absolute; top: 15px; right: 20px; border: none; background: none; font-size: 2.2rem; cursor: pointer; }
 
@@ -413,79 +404,42 @@ body {
 /* -------------------------------------------------------------------------- */
 /* 12. RÉPONSIVE                                                              */
 /* -------------------------------------------------------------------------- */
-
 @media (max-width: 1024px) {
     .episodes-chaotic-grid { grid-template-columns: repeat(2, 1fr); gap: 60px; }
     .hero-main-title { font-size: 3.5rem; }
 }
 
 @media (max-width: 768px) {
-    .container { padding: 0 30px; }
-    .episodes-chaotic-grid { grid-template-columns: 1fr; }
-    .player-widget.post-it-style { width: calc(100% - 60px); right: 30px; left: 30px; }
+    :root { --nav-h: 80px; }
+    .site-nav { height: var(--nav-h) !important; }
+    .nav-flex { padding: 0 20px; }
+    .nav-section { display: none; }
+    .main-logo-img { height: 60px; }
+    .container { padding: 0 20px; }
+    .hero-full { height: auto; padding: 140px 0 80px; }
+    .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
+    .btn-primary-large { width: 100%; padding: 20px; }
+    .section-episodes, .section-manifeste, .section-analyses { padding: 80px 0; }
+    .episodes-chaotic-grid { grid-template-columns: 1fr; gap: 40px; }
+    .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
+    .manifeste-text { font-size: 1.5rem; }
+    .visual-placeholder { height: 300px; }
+    .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
+    .article-row:hover { transform: none; }
+    .analysis-title { font-size: 1.5rem; margin: 15px 0; }
+    .analysis-link { text-align: center; }
+    .newsletter-vertical-padding { padding: 80px 20px; }
+    .newsletter-block { padding: 40px 20px; transform: none; }
+    .news-input-wrap { flex-direction: column; }
+    .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
+    .player-widget.post-it-style { width: 100%; right: 0; bottom: 0; left: 0; border-radius: 15px 15px 0 0; transform: translateY(100%); rotate: 0deg !important; }
+    .player-widget.active { transform: translateY(0); }
+    .modal-box { padding: 40px 20px; }
 }
-
-/* -------------------------------------------------------------------------- */
-/* 13. DECHIRURE                                                           */
-/* -------------------------------------------------------------------------- */
-
-.torn-divider-container {
-    width: 100%;
-    line-height: 0; 
-    display: flex;
-    flex-direction: column;
-    pointer-events: none;
-}
-
-.tear-img-bottom {
-    width: 100%;
-    height: auto;
-    margin-bottom: -1px;
-}
-
-.tear-img-top {
-    width: 100%;
-    height: auto;
-    margin-top: -1px; 
-}
-
-.color-section-sable, .color-section-brun, .color-section-ivoire {
-    position: relative;
-    z-index: 1;
-}
-
-        .torn-divider-container {
-            width: 100%;
-            line-height: 0;
-            display: block;
-            pointer-events: none;
-            position: relative;
-            z-index: 10;
-        }
-        .torn-divider-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .tear-bottom { 
-            margin-top: -100px; 
-        }
-        .tear-top { 
-            margin-bottom: -100px;
-        }
-
-        .color-section-sable, 
-        .color-section-brun, 
-        .color-section-ivoire {
-            position: relative;
-            z-index: 1;
-        }
 
 /* -------------------------------------------------------------------------- */
 /* FIN                                                       */
 /* -------------------------------------------------------------------------- */
-
 .ep-thumb::before {
     content: '';
     position: absolute;
