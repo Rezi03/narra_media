@@ -424,7 +424,7 @@ body {
     .site-nav { height: var(--nav-h) !important; }
     .nav-flex { padding: 0 20px; }
     .nav-section { display: none; }
-    .main-logo-img { height: 60px; }
+    .main-logo-img { height: 45px; }
     .container { padding: 0 20px; }
     .hero-full { height: auto; padding: 140px 0 80px; }
     .hero-description { font-size: 1.4rem; margin-bottom: 40px; }

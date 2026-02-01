@@ -144,6 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.playAudio = (title, author, src) => {
+        // Sécurité : Réafficher le widget s'il a été fermé avec stopPlayer()
+        playerWidget.style.display = "block";
+
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
         currentTrackIndex = episodesData.findIndex(ep => ep.audio === src);
@@ -189,8 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.stopPlayer = () => {
         coreAudio.pause();
+        coreAudio.currentTime = 0; 
+        
         playerWidget.classList.remove('active');
         playerWidget.classList.remove('expanded');
+        
+        // On cache physiquement l'élément pour éviter les bugs de superposition
+        playerWidget.style.display = "none";
     };
 
     coreAudio.addEventListener('timeupdate', () => {
@@ -286,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 10. EFFETS VISUELS FINAUX
     const injectTornEffects = () => {
-        if (window.innerWidth < 768) return; // Moins de rotations sur mobile pour garder la lisibilité
+        if (window.innerWidth < 768) return;
         document.querySelectorAll('.paper-sheet, .paper-sheet-alt').forEach(sheet => {
             const rot = (Math.random() * 4 - 2).toFixed(2);
             sheet.style.transform = `rotate(${rot}deg)`;
