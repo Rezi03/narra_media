@@ -284,3 +284,14 @@ const handleNavbar = () => {
     initContactForm();
 });
 
+// Dans la fonction handleNavbar de main.js
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('mainNavbar');
+    if (nav) {
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    }
+});
