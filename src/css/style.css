@@ -882,18 +882,18 @@ textarea {
 
 
 
-/* --- RESET ET BLOCAGE DES BORDS --- */
+/* --- RESET GLOBAL --- */
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
+    min-height: 100%;
     overflow-x: hidden;
     position: relative;
-    /* Empêche le décalage sur Safari mobile */
-    -webkit-overflow-scrolling: touch;
+    background-color: #FDF5E6;
 }
 
-/* --- BARRE DE NAVIGATION (NAVBAR) --- */
+/* --- NAVBAR FIXÉE ET ANIMÉE --- */
 .site-nav {
     position: fixed;
     top: 0;
@@ -903,16 +903,18 @@ html, body {
     background: rgba(253, 245, 230, 0.95);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    z-index: 2000;
-    transition: all 0.4s ease;
+    z-index: 3000;
+    transition: all 0.4s ease-in-out;
     display: flex;
     align-items: center;
-    /* Safe area pour iPhone */
-    padding-top: env(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top); /* Correction Safari encoche */
 }
 
+/* Animation de réduction */
 .site-nav.scrolled {
     height: 80px;
+    background: rgba(253, 245, 230, 0.98);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
 .nav-flex {
@@ -922,84 +924,72 @@ html, body {
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 60px;
 }
 
-/* --- MENU BURGER MOBILE (PLEIN ÉCRAN) --- */
+/* Éloigne les boutons du logo */
+.nav-section { flex: 1; display: flex; gap: 50px; }
+.nav-section.right { justify-content: flex-end; }
+.nav-center { flex: 0; }
+.main-logo-img { height: 80px; transition: height 0.4s ease; }
+.site-nav.scrolled .main-logo-img { height: 50px; }
+
+/* --- BURGER MOBILE TOTAL --- */
 @media (max-width: 768px) {
+    .nav-flex { padding: 0 25px; }
+    .nav-section.right { display: none; } /* On cache la section droite pour tout mettre dans le burger */
+
     .nav-section.left {
         display: flex !important;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 35px;
+        gap: 30px;
         
-        /* Fixation absolue plein écran */
         position: fixed;
+        /* Correction Safari Plein Écran */
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
+        height: -webkit-fill-available; 
         
-        background: #FDF5E6; /* Couleur Ivoire */
-        z-index: 2050;
-        
-        /* Animation d'entrée */
+        background: #FDF5E6;
+        z-index: 2900;
         transform: translateX(100%);
         transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    /* Quand le menu est ouvert */
-    .nav-section.left.open {
-        transform: translateX(0);
-    }
+    .nav-section.left.open { transform: translateX(0); }
 
-    /* Force l'affichage des boutons manquants */
     .nav-item {
-        display: block !important;
-        font-size: 2rem;
         font-family: 'Broadway', sans-serif;
-        opacity: 1 !important;
-        visibility: visible !important;
+        font-size: 2rem !important;
+        display: block !important; /* Force l'apparition */
     }
 }
 
-/* --- BOUTON BURGER ET CROIX DE FERMETURE --- */
+/* --- BOUTON BURGER TRANSFORMATION EN CROIX --- */
 .mobile-burger {
     display: none;
-    position: relative;
-    z-index: 2100; /* Doit être au-dessus du menu ouvert */
-    width: 40px;
-    height: 40px;
+    z-index: 3100;
+    flex-direction: column;
+    gap: 7px;
     background: none;
     border: none;
     cursor: pointer;
+    padding: 10px;
 }
 
-@media (max-width: 768px) {
-    .mobile-burger {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-}
+@media (max-width: 768px) { .mobile-burger { display: flex; } }
 
 .mobile-burger span {
-    display: block;
     width: 30px;
     height: 3px;
-    background-color: var(--brun);
-    transition: all 0.4s ease;
-    transform-origin: center;
+    background: #3E2723;
+    transition: 0.3s;
+    border-radius: 2px;
 }
 
-/* Transformation en CROIX quand la classe .open est ajoutée */
-.mobile-burger.open span:nth-child(1) {
-    transform: translateY(5.5px) rotate(45deg);
-}
-
-.mobile-burger.open span:nth-child(2) {
-    transform: translateY(-5.5px) rotate(-45deg);
-}
+.mobile-burger.open span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
+.mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
