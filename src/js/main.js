@@ -261,9 +261,20 @@ document.addEventListener('DOMContentLoaded', () => {
 /* --- FONCTIONS GLOBALES (LÉGAL) --- */
 window.openLegal = () => { 
     const m = document.getElementById('legalModal'); 
-    if(m) { m.style.display = 'flex'; m.style.opacity = "1"; }
+    // On ne touche qu'au display, le CSS s'occupe du reste
+    if(m) { 
+        m.style.display = 'flex'; 
+    }
 };
+
 window.closeLegal = () => { 
     const m = document.getElementById('legalModal'); 
     if(m) m.style.display = 'none'; 
+};
+
+// Ajoute cette fonction pour pouvoir fermer en cliquant à côté du texte
+window.closeLegalOnDim = (event) => {
+    if (event.target.id === 'legalModal') {
+        window.closeLegal();
+    }
 };
