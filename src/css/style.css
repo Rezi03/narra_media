@@ -864,9 +864,9 @@ textarea {
         display: flex !important;
         position: fixed;
         inset: 0; /* Prend les 4 coins de l'écran */
-        width: 100%;
-        height: 100vh;
-        height: 100dvh; /* FIX SAFARI : Bouche les trous blancs */
+        width: 200%;
+        height: 200vh;
+        height: 200dvh; /* FIX SAFARI : Bouche les trous blancs */
         background: var(--ivoire) !important;
         flex-direction: column;
         justify-content: center;
