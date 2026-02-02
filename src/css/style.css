@@ -12,11 +12,7 @@ html, body {
     position: relative;
 }
 
-@media (max-width: 768px) {
-    .nav-section {
-        width: 100vw; 
-        overflow: hidden; 
-}}
+
 
 .broadway, h1, h2, .title-broadway, .font-title, .btn-primary-large, .btn-stamp, .analysis-link, .btn-news-submit, #trackTitle { 
     font-family: 'Broadway', sans-serif; 
@@ -56,11 +52,7 @@ body, p, .goudy, .font-corpus {
     display: none !important;
 }
 
-@media (max-width: 768px) {
-    .nav-section.left.open .mobile-only {
-        display: block !important;
-    }
-}
+
 
 /* -------------------------------------------------------------------------- */
 /* 1. VARIABLES D'ARCHITECTURE                                                */
@@ -160,19 +152,7 @@ body {
     padding-top: env(safe-area-inset-top); 
 }
 
-@media (max-width: 768px) {
-    :root { --nav-h: 70px; }
-    
-    .site-nav { 
-        height: auto !important; 
-        min-height: var(--nav-h);
-    }
-    
-    .nav-flex { 
-        padding: 0 15px; 
-        justify-content: space-between; 
-    }
-}
+
 
 .nav-flex {
     display: flex; justify-content: space-between; align-items: center;
@@ -428,18 +408,7 @@ body {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .player-widget.post-it-style { 
-        width: 100%; 
-        right: 0; 
-        bottom: 0; 
-        left: 0; 
-        border-radius: 15px 15px 0 0; 
-        transform: translateY(150%) !important;
-        rotate: 0deg !important; 
-        display: none; 
-    }
-}
+
 
 /* -------------------------------------------------------------------------- */
 /* 11. PLAYER POST-IT                                                        */
@@ -502,45 +471,7 @@ body {
     .hero-main-title { font-size: 3.5rem; }
 }
 
-@media (max-width: 768px) {
-    :root { --nav-h: 80px; }
-    .site-nav { height: var(--nav-h) !important; }
-    .nav-flex { padding: 0 20px; }
-    
-    /* Correction taille logo mobile */
-    .main-logo-img { height: 50px !important; } 
 
-    .container { padding: 0 20px; }
-    .hero-full { height: auto; padding: 140px 0 80px; }
-    .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
-    .btn-primary-large { width: 100%; padding: 20px; }
-    .section-episodes, .section-manifeste, .section-analyses { padding: 80px 0; }
-    .episodes-chaotic-grid { grid-template-columns: 1fr; gap: 40px; }
-    .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
-    .manifeste-text { font-size: 1.5rem; }
-    .visual-placeholder { height: 300px; }
-    .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
-    .article-row:hover { transform: none; }
-    .analysis-title { font-size: 1.5rem; margin: 15px 0; }
-    .analysis-link { text-align: center; }
-    .newsletter-vertical-padding { padding: 80px 20px; }
-    .newsletter-block { padding: 40px 20px; transform: none; }
-    .news-input-wrap { flex-direction: column; }
-    .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
-    
-    /* Correction Post-it mobile */
-    .player-widget.post-it-style { 
-        width: 100%; 
-        right: 0; 
-        bottom: 0; 
-        left: 0; 
-        border-radius: 15px 15px 0 0; 
-        transform: translateY(110%) !important; /* Bien sorti de l'écran */
-        rotate: 0deg !important; 
-    }
-    .player-widget.active { transform: translateY(0) !important; }
-    .modal-box { padding: 40px 20px; }
-}
 
 /* -------------------------------------------------------------------------- */
 /* FIN                                                       */
@@ -583,46 +514,7 @@ body {
     transition: 0.3s;
 }
 
-@media (max-width: 768px) {
-    .mobile-burger { display: flex; }
-    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
 
-    .nav-section {
-        display: flex;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: var(--ivoire);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        transform: translateX(100%);
-        transition: transform 0.5s var(--ease-paper);
-        z-index: 2000;
-    }
-
-    .nav-section.open { transform: translateX(0); }
-    .nav-section {
-        display: flex;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: var(--ivoire);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        transform: translateX(100%);
-        transition: transform 0.5s var(--ease-paper);
-        z-index: 2000;
-    }
-}
 
 @keyframes rotationLogo {
     from { transform: rotate(0deg); }
@@ -909,3 +801,99 @@ textarea {
 
 
 
+@media (max-width: 768px) {
+    /* 1. VARIABLES ET BASES NAVIGATION */
+    :root { --nav-h: 80px; }
+
+    .site-nav { 
+        height: var(--nav-h) !important; 
+        min-height: var(--nav-h);
+    }
+    
+    .nav-flex { 
+        padding: 0 20px; 
+        justify-content: space-between; 
+    }
+
+    .main-logo-img { height: 50px !important; }
+
+    /* 2. LE MENU HAMBURGER (CENTRÉ ET GROS) */
+    .mobile-burger { display: flex; }
+    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
+
+    .nav-section {
+        display: flex !important; /* Force l'affichage pour le JS */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--ivoire);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 40px; /* Espace entre les gros titres */
+        transform: translateX(100%);
+        transition: transform 0.5s var(--ease-paper);
+        z-index: 2000;
+        overflow: hidden;
+    }
+
+    /* On affiche les 4 onglets ensemble lors de l'ouverture */
+    .nav-section.open { 
+        transform: translateX(0); 
+    }
+
+    .nav-section.left.open .mobile-only { display: block !important; }
+
+    /* Style des liens dans le menu mobile */
+    .nav-item {
+        font-family: 'Broadway', sans-serif !important;
+        font-size: 2.2rem !important; /* Très gros pour téléphone */
+        letter-spacing: 3px;
+        text-align: center;
+        margin: 0;
+    }
+
+    /* 3. STRUCTURE ET SECTIONS DU SITE */
+    .container { padding: 0 20px; }
+    
+    .hero-full { height: auto; padding: 140px 0 80px; }
+    .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
+    .btn-primary-large { width: 100%; padding: 20px; }
+
+    .section-episodes, .section-manifeste, .section-analyses { padding: 80px 0; }
+    .episodes-chaotic-grid { grid-template-columns: 1fr; gap: 40px; }
+    .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
+    .manifeste-text { font-size: 1.5rem; }
+    .visual-placeholder { height: 300px; }
+
+    .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
+    .article-row:hover { transform: none; }
+    .analysis-title { font-size: 1.5rem; margin: 15px 0; }
+    .analysis-link { text-align: center; }
+
+    .newsletter-vertical-padding { padding: 80px 20px; }
+    .newsletter-block { padding: 40px 20px; transform: none; }
+    .news-input-wrap { flex-direction: column; }
+    .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
+
+    /* 4. WIDGETS (PLAYER & MODAL) */
+    .player-widget.post-it-style { 
+        width: 100%; 
+        right: 0; 
+        bottom: 0; 
+        left: 0; 
+        border-radius: 15px 15px 0 0; 
+        transform: translateY(110%) !important; 
+        rotate: 0deg !important; 
+    }
+    
+    .player-widget.active { transform: translateY(0) !important; }
+    
+    .modal-box { 
+        padding: 40px 20px; 
+        background-color: var(--ivoire) !important;
+    }
+}
