@@ -882,101 +882,90 @@ textarea {
 
 
 
-/* --- RESET & CORRECTIFS SAFARI / MOBILE --- */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent;
-}
-
+/* --- RESET STRICT POUR SAFARI & CHROME --- */
 html, body {
-    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
     width: 100%;
-    /* Empêche le rebond élastique sur Safari qui crée des espaces blancs */
+    min-width: 100%;
+    overflow-x: hidden;
     position: relative;
-    overscroll-behavior-y: none;
 }
 
-/* --- NAVIGATION FIXE SANS VIDE --- */
+/* --- BARRE DE NAVIGATION (FIXÉE & ANIMÉE) --- */
 .site-nav {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    /* Utilisation de padding-top pour l'encoche iPhone (Safe Area) */
-    padding-top: env(safe-area-inset-top);
-    height: auto;
-    min-height: 80px;
-    background: rgba(253, 245, 230, 0.95);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    height: 120px; /* Taille initiale */
+    background: rgba(253, 245, 230, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     z-index: 2000;
-    border-bottom: 1px solid rgba(62, 39, 35, 0.05);
-}
-
-.nav-flex {
-    display: flex; 
-    justify-content: space-between; 
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
     align-items: center;
-    max-width: 100%; /* Colle aux bords */
-    height: 80px;
-    padding: 0 40px;
 }
 
+/* État quand on scroll */
+.site-nav.scrolled {
+    height: 80px;
+    background: rgba(253, 245, 230, 0.98);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* --- STRUCTURE FLEX (Éloigne les boutons du logo) --- */
+.nav-flex {
+    display: flex;
+    justify-content: space-between; /* Écarte les 3 blocs : gauche, centre, droite */
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.nav-section {
+    flex: 1; /* Donne une largeur égale aux côtés pour centrer parfaitement le logo */
+    display: flex;
+    gap: 50px;
+}
+
+.nav-section.right {
+    justify-content: flex-end;
+}
+
+.nav-center {
+    flex: 0; /* Le logo ne bouge pas */
+    text-align: center;
+}
+
+.main-logo-img {
+    height: 85px;
+    transition: height 0.5s ease;
+}
+
+.site-nav.scrolled .main-logo-img {
+    height: 55px; /* Le logo rétrécit aussi au scroll */
+}
+
+/* --- CORRECTIF MOBILE --- */
 @media (max-width: 768px) {
     .nav-flex { padding: 0 20px; }
-    
-    /* --- MENU BURGER PLEIN ÉCRAN --- */
     .nav-section.left {
-        display: flex !important;
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
+        width: 100%;
         height: 100vh;
-        background: var(--ivoire);
+        background: #FDF5E6;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 30px;
-        transform: translateX(100%); /* Caché à droite */
-        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        z-index: 1999;
-        visibility: hidden;
+        transform: translateX(100%);
+        transition: transform 0.4s ease;
+        z-index: 2050;
     }
-
-    .nav-section.left.open {
-        transform: translateX(0);
-        visibility: visible;
-    }
-
-    /* Affichage de tous les boutons dans le menu ouvert */
-    .nav-item {
-        font-size: 1.8rem;
-        font-family: 'Broadway', sans-serif;
-    }
-}
-
-/* --- BOUTON BURGER (Z-INDEX SUPÉRIEUR) --- */
-.mobile-burger {
-    display: none;
-    position: relative;
-    z-index: 2100; /* Doit être au-dessus du menu ouvert */
-    background: none;
-    border: none;
-    padding: 10px;
-}
-
-@media (max-width: 768px) {
-    .mobile-burger { display: flex; flex-direction: column; gap: 6px; }
-}
-
-/* --- BLOCAGE DES BORDS DU CONTENU --- */
-.hero-full, .section-episodes, .section-manifeste {
-    width: 100%;
-    max-width: 100vw;
-    margin: 0;
-    padding-left: 20px;
-    padding-right: 20px;
+    .nav-section.left.open { transform: translateX(0); }
 }
