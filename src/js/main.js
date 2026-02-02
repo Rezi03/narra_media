@@ -238,44 +238,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    /* --- 6. NAVIGATION MOBILE (OPTIMISATION) --- */
-    const handleNavbar = () => {
-        const nav = document.getElementById('mainNavbar');
-        const burgerBtn = document.getElementById('burgerBtn');
-        const navLeft = document.querySelector('.nav-section.left');
-        const navLinks = document.querySelectorAll('.nav-item');
+const handleNavbar = () => {
+    const burgerBtn = document.getElementById('burgerBtn');
+    const navLeft = document.querySelector('.nav-section.left');
+    const body = document.body;
 
-        window.addEventListener('scroll', () => {
-            if (nav) {
-                // Colle au bord sans vide
-                nav.style.top = "0";
-                if (window.scrollY > 50) {
-                    nav.style.height = "70px";
-                    nav.style.background = "rgba(253, 245, 230, 0.98)";
-                } else {
-                    nav.style.height = "100px";
-                    nav.style.background = "rgba(253, 245, 230, 0.75)";
-                }
+    if (burgerBtn && navLeft) {
+        burgerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            burgerBtn.classList.toggle('open');
+            navLeft.classList.toggle('open');
+            
+            // Bloquer le scroll derrière le menu
+            if (navLeft.classList.contains('open')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = '';
             }
         });
+    }
 
-        if (burgerBtn && navLeft) {
-            burgerBtn.onclick = () => {
-                burgerBtn.classList.toggle('open');
-                navLeft.classList.toggle('open');
-                document.body.style.overflow = navLeft.classList.contains('open') ? 'hidden' : 'auto';
-            };
-        }
-
-        // Fermeture automatique au clic sur un lien
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                burgerBtn?.classList.remove('open');
-                navLeft?.classList.remove('open');
-                document.body.style.overflow = 'auto';
-            });
+    // Fermer le menu si on clique sur un lien
+    const navLinks = document.querySelectorAll('.nav-item');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            burgerBtn.classList.remove('open');
+            navLeft.classList.remove('open');
+            body.style.overflow = '';
         });
-    };
+    });
+};
 
     /* --- INITIALISATION --- */
     restorePlayer();

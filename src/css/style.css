@@ -872,47 +872,111 @@ textarea {
     will-change: transform, opacity;
 }
 
+
+
+
+
+
+
+
+
+
+
+/* --- RESET & CORRECTIFS SAFARI / MOBILE --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+}
+
 html, body {
     overflow-x: hidden;
     width: 100%;
-    margin: 0;
-    padding: 0;
+    /* Empêche le rebond élastique sur Safari qui crée des espaces blancs */
     position: relative;
+    overscroll-behavior-y: none;
 }
 
+/* --- NAVIGATION FIXE SANS VIDE --- */
 .site-nav {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
     width: 100%;
-    z-index: 1000;
-    margin: 0;
+    /* Utilisation de padding-top pour l'encoche iPhone (Safe Area) */
+    padding-top: env(safe-area-inset-top);
+    height: auto;
+    min-height: 80px;
+    background: rgba(253, 245, 230, 0.95);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    z-index: 2000;
+    border-bottom: 1px solid rgba(62, 39, 35, 0.05);
+}
+
+.nav-flex {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    max-width: 100%; /* Colle aux bords */
+    height: 80px;
+    padding: 0 40px;
 }
 
 @media (max-width: 768px) {
+    .nav-flex { padding: 0 20px; }
+    
+    /* --- MENU BURGER PLEIN ÉCRAN --- */
     .nav-section.left {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
+        display: flex !important;
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
-        background: var(--paper-light); 
-        transform: translateX(-100%);
-        transition: transform 0.4s ease-in-out;
-        z-index: 999;
+        background: var(--ivoire);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        transform: translateX(100%); /* Caché à droite */
+        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        z-index: 1999;
+        visibility: hidden;
     }
 
     .nav-section.left.open {
         transform: translateX(0);
+        visibility: visible;
     }
-    
-    body {
-        padding-top: 80px; 
+
+    /* Affichage de tous les boutons dans le menu ouvert */
+    .nav-item {
+        font-size: 1.8rem;
+        font-family: 'Broadway', sans-serif;
     }
+}
+
+/* --- BOUTON BURGER (Z-INDEX SUPÉRIEUR) --- */
+.mobile-burger {
+    display: none;
+    position: relative;
+    z-index: 2100; /* Doit être au-dessus du menu ouvert */
+    background: none;
+    border: none;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .mobile-burger { display: flex; flex-direction: column; gap: 6px; }
+}
+
+/* --- BLOCAGE DES BORDS DU CONTENU --- */
+.hero-full, .section-episodes, .section-manifeste {
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    padding-left: 20px;
+    padding-right: 20px;
 }
