@@ -5,6 +5,19 @@
 @font-face { font-family: 'Goudy Type'; src: url('../../assets/fonts/sous-titres.ttf'); }
 @font-face { font-family: 'Angsana New'; src: url('../../assets/fonts/corpus.ttf'); }
 
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden; 
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .nav-section {
+        width: 100vw; 
+        overflow: hidden; 
+}}
+
 .broadway, h1, h2, .title-broadway, .font-title, .btn-primary-large, .btn-stamp, .analysis-link, .btn-news-submit, #trackTitle { 
     font-family: 'Broadway', sans-serif; 
     text-transform: uppercase; 
