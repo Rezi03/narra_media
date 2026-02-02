@@ -256,15 +256,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-// Dans main.js, modifiez la fonction handleNavbar
 const handleNavbar = () => {
     const burgerBtn = document.getElementById('burgerBtn');
-    const navSections = document.querySelectorAll('.nav-section'); // Cible "left" ET "right"
+    const navSections = document.querySelectorAll('.nav-section'); // Sélectionne les DEUX
 
     if (burgerBtn) {
         burgerBtn.onclick = () => {
             burgerBtn.classList.toggle('open');
-            navSections.forEach(section => section.classList.toggle('open'));
+            navSections.forEach(section => {
+                section.classList.toggle('open');
+            });
         };
     }
 };
