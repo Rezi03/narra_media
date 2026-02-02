@@ -819,65 +819,89 @@ textarea {
 
 
 
+/* 1. COMPORTEMENT PAR DÉFAUT (HORS MOBILE) */
+.nav-mobile-only { 
+    display: none; 
+}
 
+/* 2. BLOC UNIQUE POUR MOBILE (TABLETTES & TÉLÉPHONES) */
 @media (max-width: 768px) {
-    /* 1. VARIABLES ET BASES NAVIGATION */
+    /* --- VARIABLES & NAVIGATION --- */
     :root { --nav-h: 80px; }
 
     .site-nav { 
         height: var(--nav-h) !important; 
         min-height: var(--nav-h);
+        background: var(--ivoire) !important;
+        z-index: 4000;
     }
     
     .nav-flex { 
         padding: 0 20px; 
         justify-content: space-between; 
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    /* Cache les anciens menus qui buggent */
+    .nav-section.left, .nav-section.right { 
+        display: none !important; 
     }
 
     .main-logo-img { height: 50px !important; }
 
-    /* 2. LE MENU HAMBURGER (CENTRÉ ET GROS) */
-    .mobile-burger { display: flex; }
+    /* --- LE BOUTON BURGER --- */
+    .mobile-burger { 
+        display: flex; 
+        z-index: 6000; /* Toujours au-dessus du panneau beige */
+    }
     .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
     .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
 
-    .nav-section {
-        display: flex !important; /* Force l'affichage pour le JS */
+    /* --- LE PANNEAU BEIGE (PLEIN ÉCRAN) --- */
+    .nav-mobile-only {
+        display: flex !important;
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
+        inset: 0; /* Prend les 4 coins de l'écran */
+        width: 100%;
         height: 100vh;
-        background: var(--ivoire);
+        height: 100dvh; /* FIX SAFARI : Bouche les trous blancs */
+        background: var(--ivoire) !important;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 40px; /* Espace entre les gros titres */
-        transform: translateX(100%);
-        transition: transform 0.5s var(--ease-paper);
-        z-index: 2000;
-        overflow: hidden;
-    }
-
-    /* On affiche les 4 onglets ensemble lors de l'ouverture */
-    .nav-section.open { 
-        transform: translateX(0); 
-    }
-
-    .nav-section.left.open .mobile-only { display: block !important; }
-
-    /* Style des liens dans le menu mobile */
-    .nav-item {
-        font-family: 'Broadway', sans-serif !important;
-        font-size: 2.2rem !important; /* Très gros pour téléphone */
-        letter-spacing: 3px;
-        text-align: center;
+        gap: 35px; /* Espace entre les 4 boutons */
+        z-index: 5000;
+        transform: translateX(100%); /* Caché à droite par défaut */
+        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        padding: 0;
         margin: 0;
     }
 
-    /* 3. STRUCTURE ET SECTIONS DU SITE */
-    .container { padding: 0 20px; }
+    /* Quand on clique sur le burger */
+    .nav-mobile-only.open {
+        transform: translateX(0);
+    }
+
+    /* Style des 4 liens : ÉNORMES et CENTRÉS */
+    .nav-mobile-only .nav-item {
+        display: block !important;
+        font-family: 'Broadway', sans-serif !important;
+        font-size: 2.5rem !important; 
+        letter-spacing: 3px;
+        text-align: center;
+        color: var(--brun) !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
     
+    .nav-mobile-only .nav-item:active {
+        color: var(--terracotta) !important;
+    }
+
+    /* --- STRUCTURE DU RESTE DU SITE --- */
+    .container { padding: 0 20px; }
     .hero-full { height: auto; padding: 140px 0 80px; }
     .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
     .btn-primary-large { width: 100%; padding: 20px; }
@@ -889,26 +913,20 @@ textarea {
     .visual-placeholder { height: 300px; }
 
     .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
-    .article-row:hover { transform: none; }
     .analysis-title { font-size: 1.5rem; margin: 15px 0; }
     .analysis-link { text-align: center; }
 
-    .newsletter-vertical-padding { padding: 80px 20px; }
-    .newsletter-block { padding: 40px 20px; transform: none; }
-    .news-input-wrap { flex-direction: column; }
     .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
 
-    /* 4. WIDGETS (PLAYER & MODAL) */
+    /* --- WIDGETS --- */
     .player-widget.post-it-style { 
         width: 100%; 
-        right: 0; 
-        bottom: 0; 
-        left: 0; 
+        right: 0; bottom: 0; left: 0; 
         border-radius: 15px 15px 0 0; 
         transform: translateY(110%) !important; 
         rotate: 0deg !important; 
+        z-index: 4500;
     }
-    
     .player-widget.active { transform: translateY(0) !important; }
     
     .modal-box { 
