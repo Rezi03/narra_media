@@ -43,12 +43,6 @@ body, p, .goudy, .font-corpus {
     display: none !important;
 }
 
-@media (max-width: 768px) {
-    .nav-section.left.open .mobile-only {
-        display: block !important;
-    }
-}
-
 /* -------------------------------------------------------------------------- */
 /* 1. VARIABLES D'ARCHITECTURE                                                */
 /* -------------------------------------------------------------------------- */
@@ -145,20 +139,6 @@ body {
     border-bottom: 1px solid rgba(62, 39, 35, 0.05);
     transition: height 0.6s var(--ease-paper);
     padding-top: env(safe-area-inset-top); 
-}
-
-@media (max-width: 768px) {
-    :root { --nav-h: 70px; }
-    
-    .site-nav { 
-        height: auto !important; 
-        min-height: var(--nav-h);
-    }
-    
-    .nav-flex { 
-        padding: 0 15px; 
-        justify-content: space-between; 
-    }
 }
 
 .nav-flex {
@@ -415,19 +395,6 @@ body {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .player-widget.post-it-style { 
-        width: 100%; 
-        right: 0; 
-        bottom: 0; 
-        left: 0; 
-        border-radius: 15px 15px 0 0; 
-        transform: translateY(150%) !important;
-        rotate: 0deg !important; 
-        display: none; 
-    }
-}
-
 /* -------------------------------------------------------------------------- */
 /* 11. PLAYER POST-IT                                                        */
 /* -------------------------------------------------------------------------- */
@@ -491,39 +458,78 @@ body {
 
 @media (max-width: 768px) {
     :root { --nav-h: 80px; }
-    .site-nav { height: var(--nav-h) !important; }
-    .nav-flex { padding: 0 20px; }
-    .nav-section { display: none; }
-    
-    /* Correction taille logo mobile */
+
+    /* --- 1. SYSTÈME DE FOND (Tes vagues et effets) --- */
+    .bg-system { opacity: 0.8; } /* Réajuste si besoin pour tes effets de vagues */
+    .ray { filter: blur(60px); opacity: 0.4; }
+
+    /* --- 2. NAVIGATION & BURGER (Correction Menu) --- */
+    .site-nav { height: var(--nav-h) !important; z-index: 3000; }
+    .nav-flex { padding: 0 20px; justify-content: space-between; }
     .main-logo-img { height: 50px !important; } 
 
+    .nav-section.right { display: none !important; } /* On cache la partie droite fixe */
+    
+    .nav-section.left {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        height: -webkit-fill-available; 
+        background: var(--ivoire);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        z-index: 2900;
+        transform: translateX(100%);
+        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .nav-section.left.open { transform: translateX(0); }
+
+    .nav-item {
+        font-family: 'Broadway', sans-serif;
+        font-size: 2rem !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .mobile-burger { display: flex; }
+    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
+
+    /* --- 3. MISE EN PAGE & GRILLES (Récupéré des anciens blocs) --- */
     .container { padding: 0 20px; }
     .hero-full { height: auto; padding: 140px 0 80px; }
     .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
     .btn-primary-large { width: 100%; padding: 20px; }
+    
     .section-episodes, .section-manifeste, .section-analyses { padding: 80px 0; }
-    .episodes-chaotic-grid { grid-template-columns: 1fr; gap: 40px; }
-    .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
+    .episodes-chaotic-grid, .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
     .manifeste-text { font-size: 1.5rem; }
     .visual-placeholder { height: 300px; }
+
     .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
     .article-row:hover { transform: none; }
     .analysis-title { font-size: 1.5rem; margin: 15px 0; }
-    .analysis-link { text-align: center; }
+    
     .newsletter-vertical-padding { padding: 80px 20px; }
     .newsletter-block { padding: 40px 20px; transform: none; }
     .news-input-wrap { flex-direction: column; }
     .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
     
-    /* Correction Post-it mobile */
+    /* --- 4. PLAYER & MODALES --- */
     .player-widget.post-it-style { 
         width: 100%; 
         right: 0; 
         bottom: 0; 
         left: 0; 
         border-radius: 15px 15px 0 0; 
-        transform: translateY(110%) !important; /* Bien sorti de l'écran */
+        transform: translateY(110%) !important; 
         rotate: 0deg !important; 
     }
     .player-widget.active { transform: translateY(0) !important; }
@@ -569,32 +575,6 @@ body {
     height: 3px;
     background-color: var(--brun);
     transition: 0.3s;
-}
-
-@media (max-width: 768px) {
-    .mobile-burger { display: flex; }
-    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
-
-    .nav-section {
-        display: flex;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: var(--ivoire);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        transform: translateX(100%);
-        transition: transform 0.5s var(--ease-paper);
-        z-index: 2000;
-    }
-
-    .nav-section.open { transform: translateX(0); }
-    .nav-section.right { display: none; }
 }
 
 @keyframes rotationLogo {
@@ -934,40 +914,6 @@ html, body {
 .main-logo-img { height: 80px; transition: height 0.4s ease; }
 .site-nav.scrolled .main-logo-img { height: 50px; }
 
-/* --- BURGER MOBILE TOTAL --- */
-@media (max-width: 768px) {
-    .nav-flex { padding: 0 25px; }
-    .nav-section.right { display: none; } /* On cache la section droite pour tout mettre dans le burger */
-
-    .nav-section.left {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        
-        position: fixed;
-        /* Correction Safari Plein Écran */
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        height: -webkit-fill-available; 
-        
-        background: #FDF5E6;
-        z-index: 2900;
-        transform: translateX(100%);
-        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .nav-section.left.open { transform: translateX(0); }
-
-    .nav-item {
-        font-family: 'Broadway', sans-serif;
-        font-size: 2rem !important;
-        display: block !important; /* Force l'apparition */
-    }
-}
 
 /* --- BOUTON BURGER TRANSFORMATION EN CROIX --- */
 .mobile-burger {
@@ -980,8 +926,6 @@ html, body {
     cursor: pointer;
     padding: 10px;
 }
-
-@media (max-width: 768px) { .mobile-burger { display: flex; } }
 
 .mobile-burger span {
     width: 30px;
