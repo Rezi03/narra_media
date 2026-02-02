@@ -864,9 +864,9 @@ textarea {
         display: flex !important;
         position: fixed;
         inset: 0; /* Prend les 4 coins de l'écran */
-        width: 200%;
-        height: 200vh;
-        height: 200dvh; /* FIX SAFARI : Bouche les trous blancs */
+        width: 100%;
+        height: 100vh;
+        height: 100dvh; /* FIX SAFARI : Bouche les trous blancs */
         background: var(--ivoire) !important;
         flex-direction: column;
         justify-content: center;
@@ -946,4 +946,38 @@ textarea {
     .spacer-section {
         height: 80px;
     }
+}
+
+
+@media (max-width: 768px) {
+    /* 1. Le bandeau de remplissage */
+    .mobile-top-filler {
+        display: block; /* Visible sur mobile */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40px; /* Ajuste selon la taille du trou */
+        background-color: var(--ivoire); /* Même couleur que ta nav */
+        z-index: 1001; /* Juste au-dessus de la nav mais sous le burger */
+    }
+
+    /* 2. On décale la nav pour qu'elle commence juste après le bandeau */
+    .site-nav {
+        top: 40px !important;
+    }
+
+    /* 3. Quand on scroll, on garde le blocage pour éviter les sauts */
+    .site-nav.scrolled {
+        top: 0 !important;
+    }
+    
+    .site-nav.scrolled + .mobile-top-filler {
+        display: none; /* Optionnel : cache le bandeau quand on scroll */
+    }
+}
+
+/* On cache le bandeau sur ordinateur pour ne pas décaler ton design */
+.mobile-top-filler {
+    display: none;
 }
