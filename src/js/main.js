@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* --- 1. DONNÉES --- */
     const episodesData = [
         {
             id: 14,
@@ -44,13 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioRange = document.getElementById('audioRange');
     const currentTimeDisplay = document.getElementById('currentTime');
     const durationTimeDisplay = document.getElementById('durationTime');
+    const nav = document.getElementById('mainNavbar');
 
-    /* --- 2. PERSISTANCE AUDIO & RÉCUPÉRATION --- */
     const restorePlayer = () => {
         if (coreAudio && sessionStorage.getItem("n_src")) {
             let src = sessionStorage.getItem("n_src");
             
-            // Correction dynamique des chemins selon la profondeur de la page
             const isSubPage = window.location.pathname.includes('pages/');
             if (isSubPage && !src.includes('../')) src = '../' + src;
             if (!isSubPage) src = src.replace('../', '');
@@ -63,11 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
             coreAudio.addEventListener('loadedmetadata', () => {
                 coreAudio.currentTime = savedTime;
                 
-                // Tentative de relance automatique (souvent bloqué par les navigateurs sans clic)
                 if (sessionStorage.getItem("n_playing") === "true") {
                     coreAudio.play().then(() => {
                         if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
-                    }).catch(() => console.log("Autoplay en attente d'interaction"));
+                    }).catch(() => {});
                 }
             }, { once: true });
 
@@ -79,10 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Sauvegarde l'état toutes les 500ms
     setInterval(() => {
         if (coreAudio && coreAudio.src && coreAudio.src !== "") {
-            // On sauvegarde le chemin relatif "propre"
             const cleanPath = coreAudio.src.split(window.location.origin).pop().substring(1).replace('../', '');
             sessionStorage.setItem("n_src", cleanPath);
             sessionStorage.setItem("n_time", coreAudio.currentTime);
@@ -94,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 500);
 
-    /* --- 3. RENDU INTERFACE (ACCUEIL) --- */
     const renderUI = () => {
         const epContainer = document.getElementById('episodes-container');
         const artContainer = document.getElementById('articles-container');
@@ -133,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    /* --- 4. FONCTIONS DU LECTEUR --- */
     const formatTime = (s) => {
         if (isNaN(s)) return "00:00";
         const m = Math.floor(s / 60);
@@ -202,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- 5. PAGE CONTACT & FORMULAIRE --- */
     const initContactForm = () => {
         const form = document.getElementById("contactForm");
         const letter = document.getElementById("letter");
@@ -238,52 +230,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-const handleNavbar = () => {
-    const burgerBtn = document.getElementById('burgerBtn');
-    const navLeft = document.querySelector('.nav-section.left');
-    const body = document.body;
+    const handleNavbar = () => {
+        const burgerBtn = document.getElementById('burgerBtn');
+        const navLeft = document.querySelector('.nav-section.left');
+        const body = document.body;
 
-    if (burgerBtn && navLeft) {
-        burgerBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            burgerBtn.classList.toggle('open');
-            navLeft.classList.toggle('open');
-            
-            // Bloquer le scroll derrière le menu
-            if (navLeft.classList.contains('open')) {
-                body.style.overflow = 'hidden';
-            } else {
-                body.style.overflow = '';
+        window.addEventListener('scroll', () => {
+            if (nav) {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
             }
         });
-    }
 
-    // Fermer le menu si on clique sur un lien
-    const navLinks = document.querySelectorAll('.nav-item');
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            burgerBtn.classList.remove('open');
-            navLeft.classList.remove('open');
-            body.style.overflow = '';
+        if (burgerBtn && navLeft) {
+            burgerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                burgerBtn.classList.toggle('open');
+                navLeft.classList.toggle('open');
+                
+                if (navLeft.classList.contains('open')) {
+                    body.style.overflow = 'hidden';
+                } else {
+                    body.style.overflow = '';
+                }
+            });
+        }
+
+        const navLinks = document.querySelectorAll('.nav-item');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                burgerBtn.classList.remove('open');
+                navLeft.classList.remove('open');
+                body.style.overflow = '';
+            });
         });
-    });
-};
+    };
 
-    /* --- INITIALISATION --- */
     restorePlayer();
     renderUI();
     handleNavbar();
     initContactForm();
     
-    // Débloque l'audio au premier clic (Anti-blocage navigateur)
     document.addEventListener('click', () => {
         if (sessionStorage.getItem("n_playing") === "true" && coreAudio.paused) {
-            coreAudio.play();
+            coreAudio.play().catch(() => {});
         }
     }, { once: true });
 });
 
-/* --- FONCTIONS GLOBALES (LÉGAL) --- */
 window.openLegal = () => { 
     const m = document.getElementById('legalModal');
     if(m) { m.style.display = 'flex'; m.style.opacity = "1"; }
