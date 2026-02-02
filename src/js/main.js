@@ -1,10 +1,5 @@
-/* -------------------------------------------------------------------------- */
-/* NARRA MÉDIA - MOTEUR JS INTÉGRAL (LECTEUR COMPLET V.2026)                  */
-/* -------------------------------------------------------------------------- */
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. DONNÉES DES ÉPISODES
     const episodesData = [
         {
             id: 14,
@@ -35,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // 2. DONNÉES DES ARTICLES
     const articlesData = [
         {
             category: "SOCIÉTÉ",
@@ -58,8 +52,56 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let currentTrackIndex = -1;
+    const coreAudio = document.getElementById('coreAudio');
+    const playerWidget = document.getElementById('audioPlayer');
+    const playIcon = document.getElementById('playIcon');
+    const audioRange = document.getElementById('audioRange');
+    const currentTimeDisplay = document.getElementById('currentTime');
+    const durationTimeDisplay = document.getElementById('durationTime');
 
-    // 3. MOTEUR DE RENDU UI
+    const restorePlayer = () => {
+        if (coreAudio && sessionStorage.getItem("n_src")) {
+            coreAudio.src = sessionStorage.getItem("n_src");
+            document.getElementById('trackTitle').innerText = sessionStorage.getItem("n_title");
+            document.getElementById('trackAuthor').innerText = sessionStorage.getItem("n_author");
+            
+            const savedTime = parseFloat(sessionStorage.getItem("n_time"));
+            
+            coreAudio.addEventListener('loadedmetadata', () => {
+                coreAudio.currentTime = savedTime;
+            }, { once: true });
+
+            if (sessionStorage.getItem("n_active") === "true") {
+                playerWidget.style.display = "block";
+                playerWidget.classList.add('active');
+                
+                if (sessionStorage.getItem("n_expanded") === "true") {
+                    playerWidget.classList.add('expanded');
+                }
+                
+                if (sessionStorage.getItem("n_playing") === "true") {
+                    setTimeout(() => {
+                        coreAudio.play().then(() => {
+                            if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
+                        }).catch(() => {});
+                    }, 100);
+                }
+            }
+        }
+    };
+
+    setInterval(() => {
+        if (coreAudio && coreAudio.src && coreAudio.src !== "") {
+            sessionStorage.setItem("n_src", coreAudio.src);
+            sessionStorage.setItem("n_time", coreAudio.currentTime);
+            sessionStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
+            sessionStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
+            sessionStorage.setItem("n_active", playerWidget.classList.contains('active'));
+            sessionStorage.setItem("n_expanded", playerWidget.classList.contains('expanded'));
+            sessionStorage.setItem("n_playing", !coreAudio.paused);
+        }
+    }, 500);
+
     const renderUI = () => {
         const epContainer = document.getElementById('episodes-container');
         const artContainer = document.getElementById('articles-container');
@@ -67,11 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (epContainer) {
             epContainer.innerHTML = episodesData.map(ep => {
                 const rot = (Math.random() * 4 - 2).toFixed(2);
-                const safeTitle = ep.title.replace(/'/g, "\\'");
-                const safeAuthor = ep.author.replace(/'/g, "\\'");
-                
                 return `
-                    <article class="ep-card reveal visible" style="transform: rotate(${rot}deg)" onclick="playAudio('${safeTitle}', '${safeAuthor}', '${ep.audio}')">
+                    <article class="ep-card reveal visible" style="transform: rotate(${rot}deg)" onclick="playAudio('${ep.title.replace(/'/g, "\\'")}', '${ep.author.replace(/'/g, "\\'")}', '${ep.audio}')">
                         <div class="ep-overlay-play broadway">ÉCOUTER</div>
                         <div class="ep-thumb">
                             <img src="${ep.image}" alt="${ep.title}" class="ep-image-dynamic">
@@ -101,41 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 4. GESTION DU SCROLL
-    const initScrollAnimations = () => {
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, { threshold: 0.1 });
-        
-        reveals.forEach(el => observer.observe(el));
-    };
-
-    // 5. EFFETS DE PARALLAXE (Désactivé sur mobile pour la performance)
-    const initParallaxBackground = () => {
-        if (window.innerWidth < 768) return;
-        const ray1 = document.getElementById('ray1');
-        const ray2 = document.getElementById('ray2');
-        window.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) - 0.5;
-            const y = (e.clientY / window.innerHeight) - 0.5;
-            requestAnimationFrame(() => {
-                if (ray1) ray1.style.transform = `translate(${x * 40}px, ${y * 40}px) rotate(${x * 2}deg)`;
-                if (ray2) ray2.style.transform = `translate(${x * -80}px, ${y * -80}px) rotate(${y * -2}deg)`;
-            });
-        });
-    };
-
-    // 6. LECTEUR AUDIO CENTRAL
-    const coreAudio = document.getElementById('coreAudio');
-    const playerWidget = document.getElementById('audioPlayer');
-    const playIcon = document.getElementById('playIcon');
-    const audioRange = document.getElementById('audioRange');
-    const currentTimeDisplay = document.getElementById('currentTime');
-    const durationTimeDisplay = document.getElementById('durationTime');
-
     const formatTime = (seconds) => {
         if (isNaN(seconds)) return "00:00";
         const mins = Math.floor(seconds / 60);
@@ -144,28 +148,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.playAudio = (title, author, src) => {
-        const playerWidget = document.getElementById('audioPlayer');
-
         playerWidget.style.display = "block";
-
-        setTimeout(() => {
-            playerWidget.classList.add('active');
-        }, 10);
+        setTimeout(() => { playerWidget.classList.add('active'); }, 10);
 
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
         
-        currentTrackIndex = episodesData.findIndex(ep => ep.audio === src);
+        currentTrackIndex = episodesData.findIndex(ep => src.includes(ep.audio));
 
-        if (!coreAudio.src.includes(src)) {
-            coreAudio.src = src;
+        let finalSrc = src;
+        if (window.location.pathname.includes('pages/')) {
+            if (!src.startsWith('../')) finalSrc = '../' + src;
+        } else {
+            finalSrc = src.replace('../', '');
+        }
+
+        if (!coreAudio.src.includes(src.replace('../', ''))) {
+            coreAudio.src = finalSrc;
             coreAudio.load();
         }
 
         coreAudio.play().then(() => {
-            const playIcon = document.getElementById('playIcon');
             if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
-        }).catch(() => console.log("Lecture bloquée"));
+        });
     };
 
     window.nextTrack = () => {
@@ -192,126 +197,95 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.expandPlayer = () => {
-        playerWidget.classList.toggle('expanded');
-    };
+    window.expandPlayer = () => { playerWidget.classList.toggle('expanded'); };
 
     window.stopPlayer = () => {
         coreAudio.pause();
-        coreAudio.currentTime = 0; 
-        
-        playerWidget.classList.remove('active');
-        playerWidget.classList.remove('expanded');
-        
-        // On cache physiquement l'élément pour éviter les bugs de superposition
+        playerWidget.classList.remove('active', 'expanded');
         playerWidget.style.display = "none";
+        sessionStorage.clear();
     };
 
     coreAudio.addEventListener('timeupdate', () => {
-        const val = (coreAudio.currentTime / coreAudio.duration) * 100;
-        if (audioRange) audioRange.value = val || 0;
-        if (currentTimeDisplay) currentTimeDisplay.innerText = formatTime(coreAudio.currentTime);
-        if (durationTimeDisplay && !isNaN(coreAudio.duration)) {
+        if (audioRange && !isNaN(coreAudio.duration)) {
+            audioRange.value = (coreAudio.currentTime / coreAudio.duration) * 100;
+            currentTimeDisplay.innerText = formatTime(coreAudio.currentTime);
             durationTimeDisplay.innerText = formatTime(coreAudio.duration);
         }
     });
 
     if (audioRange) {
         audioRange.addEventListener('input', () => {
-            const seekTo = coreAudio.duration * (audioRange.value / 100);
-            coreAudio.currentTime = seekTo;
+            coreAudio.currentTime = coreAudio.duration * (audioRange.value / 100);
         });
     }
 
-    // 7. MENTIONS LÉGALES
-    window.openLegal = () => {
-        const modal = document.getElementById('legalModal');
-        if (modal) {
-            modal.style.display = 'flex';
-            setTimeout(() => modal.style.opacity = "1", 10);
-            document.body.style.overflow = 'hidden';
+    const initContactForm = () => {
+        const form = document.getElementById("contactForm");
+        const letter = document.getElementById("letter");
+        const btn = document.getElementById("sendBtn");
+
+        if (form) {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                btn.disabled = true;
+                btn.innerText = "EXPÉDITION...";
+                try {
+                    const response = await fetch("https://formspree.io/f/xojwddye", {
+                        method: 'POST',
+                        body: new FormData(e.target),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (response.ok) {
+                        letter.classList.add('sent-status');
+                        setTimeout(() => {
+                            letter.style.opacity = "0";
+                            letter.classList.remove('sent-status');
+                            form.reset();
+                            btn.innerText = "EXPÉDIER LA LETTRE";
+                            btn.disabled = false;
+                            setTimeout(() => {
+                                letter.style.opacity = "1";
+                                letter.classList.add('new-letter-arrival');
+                                setTimeout(() => { letter.classList.remove('new-letter-arrival'); }, 800);
+                            }, 300);
+                        }, 1400); 
+                    }
+                } catch (error) { btn.disabled = false; }
+            });
         }
     };
 
-    window.closeLegal = () => {
-        const modal = document.getElementById('legalModal');
-        if (modal) {
-            modal.style.opacity = "0";
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }, 500);
-        }
-    };
-
-    window.closeLegalOnDim = (e) => {
-        if (e.target.id === 'legalModal') closeLegal();
-    };
-
-    // 8. NAVIGATION & BURGER MENU
     const handleNavbar = () => {
         const nav = document.getElementById('mainNavbar');
         const burgerBtn = document.getElementById('burgerBtn');
         const navLeft = document.querySelector('.nav-section.left');
-        const navLinks = document.querySelectorAll('.nav-item');
-
         window.addEventListener('scroll', () => {
             if (nav) {
-                if (window.scrollY > 80) {
-                    nav.style.height = window.innerWidth > 768 ? "90px" : "70px";
-                    nav.style.background = "rgba(253, 245, 230, 0.98)";
-                } else {
-                    nav.style.height = window.innerWidth > 768 ? "120px" : "80px";
-                    nav.style.background = "rgba(253, 245, 230, 0.75)";
-                }
+                nav.style.height = window.scrollY > 80 ? "90px" : "120px";
+                nav.style.background = window.scrollY > 80 ? "rgba(253, 245, 230, 0.98)" : "rgba(253, 245, 230, 0.75)";
             }
         });
-
-        if (burgerBtn && navLeft) {
-            burgerBtn.addEventListener('click', () => {
+        if (burgerBtn) {
+            burgerBtn.onclick = () => {
                 burgerBtn.classList.toggle('open');
                 navLeft.classList.toggle('open');
-                document.body.style.overflow = navLeft.classList.contains('open') ? 'hidden' : 'auto';
-            });
+            };
         }
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                burgerBtn?.classList.remove('open');
-                navLeft?.classList.remove('open');
-                document.body.style.overflow = 'auto';
-            });
-        });
     };
 
-    // 9. NEWSLETTER
-    const initNewsletter = () => {
-        const form = document.getElementById('newsForm');
-        if (!form) return;
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = form.querySelector('.btn-news-submit');
-            const originalText = btn.innerText;
-            btn.innerText = "MERCI !";
-            form.reset();
-            setTimeout(() => btn.innerText = originalText, 4000);
-        });
+    window.openLegal = () => { 
+        const m = document.getElementById('legalModal');
+        if(m) { m.style.display = 'flex'; m.style.opacity = "1"; }
+    };
+    window.closeLegal = () => { 
+        const m = document.getElementById('legalModal');
+        if(m) { m.style.display = 'none'; }
     };
 
-    // 10. EFFETS VISUELS FINAUX
-    const injectTornEffects = () => {
-        if (window.innerWidth < 768) return;
-        document.querySelectorAll('.paper-sheet, .paper-sheet-alt').forEach(sheet => {
-            const rot = (Math.random() * 4 - 2).toFixed(2);
-            sheet.style.transform = `rotate(${rot}deg)`;
-        });
-    };
-
-    // INITIALISATION GÉNÉRALE
+    restorePlayer();
     renderUI();
-    initScrollAnimations();
-    initParallaxBackground();
     handleNavbar();
-    initNewsletter();
-    injectTornEffects();
+    initContactForm();
 });
+
