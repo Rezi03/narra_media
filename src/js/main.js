@@ -47,35 +47,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const durationTimeDisplay = document.getElementById('durationTime');
 
     /* --- LOGIQUE AUDIO & PLAYER --- */
-    const restorePlayer = () => {
-        if (coreAudio && sessionStorage.getItem("n_src")) {
-            coreAudio.src = sessionStorage.getItem("n_src");
-            document.getElementById('trackTitle').innerText = sessionStorage.getItem("n_title");
-            document.getElementById('trackAuthor').innerText = sessionStorage.getItem("n_author");
-            const savedTime = parseFloat(sessionStorage.getItem("n_time"));
-            coreAudio.addEventListener('loadedmetadata', () => { coreAudio.currentTime = savedTime; }, { once: true });
-            if (sessionStorage.getItem("n_active") === "true") {
-                playerWidget.style.display = "block";
-                playerWidget.classList.add('active');
-                if (sessionStorage.getItem("n_expanded") === "true") playerWidget.classList.add('expanded');
-                if (sessionStorage.getItem("n_playing") === "true") {
-                    setTimeout(() => { coreAudio.play().then(() => { if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>"; }).catch(() => {}); }, 100);
-                }
+const restorePlayer = () => {
+    if (coreAudio && sessionStorage.getItem("n_src")) {
+        coreAudio.src = sessionStorage.getItem("n_src");
+        document.getElementById('trackTitle').innerText = sessionStorage.getItem("n_title");
+        document.getElementById('trackAuthor').innerText = sessionStorage.getItem("n_author");
+        
+        const savedTime = parseFloat(sessionStorage.getItem("n_time"));
+        
+        // IMPORTANT : On attend que le fichier soit chargé pour caler le temps
+        coreAudio.addEventListener('loadedmetadata', () => {
+            if (!isNaN(savedTime)) {
+                coreAudio.currentTime = savedTime;
+            }
+        }, { once: true });
+
+        if (sessionStorage.getItem("n_active") === "true") {
+            playerWidget.style.display = "block";
+            playerWidget.classList.add('active');
+            
+            if (sessionStorage.getItem("n_expanded") === "true") {
+                playerWidget.classList.add('expanded');
+            }
+            
+            // Sur mobile, on change juste l'icône, on ne force pas le .play()
+            if (sessionStorage.getItem("n_playing") === "true") {
+                if (playIcon) playIcon.innerHTML = "<span>PLAY</span>";
             }
         }
+    }
+};
+
+setInterval(() => {
+    // On ne sauvegarde que si le temps est un nombre valide et supérieur à 0
+    if (coreAudio && coreAudio.src && !isNaN(coreAudio.currentTime) && coreAudio.currentTime > 0) {
+        sessionStorage.setItem("n_src", coreAudio.src);
+        sessionStorage.setItem("n_time", coreAudio.currentTime);
+        sessionStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
+        sessionStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
+        sessionStorage.setItem("n_active", playerWidget.classList.contains('active'));
+        sessionStorage.setItem("n_expanded", playerWidget.classList.contains('expanded'));
+        sessionStorage.setItem("n_playing", !coreAudio.paused);
+    }
+}, 1000);
+
+window.nextTrack = () => {
+        if (episodesData.length === 0) return;
+        // On incrémente l'index ou on revient au début (0) si on dépasse la fin
+        currentTrackIndex = (currentTrackIndex + 1) % episodesData.length;
+        const track = episodesData[currentTrackIndex];
+        window.playAudio(track.title, track.author, track.audio);
     };
 
-    setInterval(() => {
-        if (coreAudio && coreAudio.src && coreAudio.src !== "") {
-            sessionStorage.setItem("n_src", coreAudio.src);
-            sessionStorage.setItem("n_time", coreAudio.currentTime);
-            sessionStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
-            sessionStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
-            sessionStorage.setItem("n_active", playerWidget.classList.contains('active'));
-            sessionStorage.setItem("n_expanded", playerWidget.classList.contains('expanded'));
-            sessionStorage.setItem("n_playing", !coreAudio.paused);
-        }
-    }, 500);
+    window.prevTrack = () => {
+        if (episodesData.length === 0) return;
+        // On recule l'index ou on repart de la fin si on est au début
+        currentTrackIndex = (currentTrackIndex - 1 + episodesData.length) % episodesData.length;
+        const track = episodesData[currentTrackIndex];
+        window.playAudio(track.title, track.author, track.audio);
+    };
 
     const formatTime = (seconds) => {
         if (isNaN(seconds)) return "00:00";
