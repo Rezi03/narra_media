@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    /* --- 1. DONNÉES --- */
     const episodesData = [
         {
             id: 14,
@@ -31,24 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const articlesData = [
-        {
-            category: "SOCIÉTÉ",
-            title: "Le futur du travail hybride",
-            link: "pages/art1.html",
-            duration: "8 MIN"
-        },
-        {
-            category: "ÉCONOMIE",
-            title: "L'économie de l'attention",
-            link: "pages/art2.html",
-            duration: "12 MIN"
-        },
-        {
-            category: "CULTURE",
-            title: "L'art du silence digital",
-            link: "pages/art3.html",
-            duration: "10 MIN"
-        }
+        { category: "SOCIÉTÉ", title: "Le futur du travail hybride", link: "pages/art1.html", duration: "8 MIN" },
+        { category: "ÉCONOMIE", title: "L'économie de l'attention", link: "pages/art2.html", duration: "12 MIN" },
+        { category: "CULTURE", title: "L'art du silence digital", link: "pages/art3.html", duration: "10 MIN" }
     ];
 
     let currentTrackIndex = -1;
@@ -59,40 +45,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTimeDisplay = document.getElementById('currentTime');
     const durationTimeDisplay = document.getElementById('durationTime');
 
+    /* --- 2. PERSISTANCE AUDIO & RÉCUPÉRATION --- */
     const restorePlayer = () => {
         if (coreAudio && sessionStorage.getItem("n_src")) {
-            coreAudio.src = sessionStorage.getItem("n_src");
+            let src = sessionStorage.getItem("n_src");
+            
+            // Correction dynamique des chemins selon la profondeur de la page
+            const isSubPage = window.location.pathname.includes('pages/');
+            if (isSubPage && !src.includes('../')) src = '../' + src;
+            if (!isSubPage) src = src.replace('../', '');
+
+            coreAudio.src = src;
             document.getElementById('trackTitle').innerText = sessionStorage.getItem("n_title");
             document.getElementById('trackAuthor').innerText = sessionStorage.getItem("n_author");
             
             const savedTime = parseFloat(sessionStorage.getItem("n_time"));
-            
             coreAudio.addEventListener('loadedmetadata', () => {
                 coreAudio.currentTime = savedTime;
+                
+                // Tentative de relance automatique (souvent bloqué par les navigateurs sans clic)
+                if (sessionStorage.getItem("n_playing") === "true") {
+                    coreAudio.play().then(() => {
+                        if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
+                    }).catch(() => console.log("Autoplay en attente d'interaction"));
+                }
             }, { once: true });
 
             if (sessionStorage.getItem("n_active") === "true") {
                 playerWidget.style.display = "block";
                 playerWidget.classList.add('active');
-                
-                if (sessionStorage.getItem("n_expanded") === "true") {
-                    playerWidget.classList.add('expanded');
-                }
-                
-                if (sessionStorage.getItem("n_playing") === "true") {
-                    setTimeout(() => {
-                        coreAudio.play().then(() => {
-                            if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
-                        }).catch(() => {});
-                    }, 100);
-                }
+                if (sessionStorage.getItem("n_expanded") === "true") playerWidget.classList.add('expanded');
             }
         }
     };
 
+    // Sauvegarde l'état toutes les 500ms
     setInterval(() => {
         if (coreAudio && coreAudio.src && coreAudio.src !== "") {
-            sessionStorage.setItem("n_src", coreAudio.src);
+            // On sauvegarde le chemin relatif "propre"
+            const cleanPath = coreAudio.src.split(window.location.origin).pop().substring(1).replace('../', '');
+            sessionStorage.setItem("n_src", cleanPath);
             sessionStorage.setItem("n_time", coreAudio.currentTime);
             sessionStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
             sessionStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
@@ -102,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 500);
 
+    /* --- 3. RENDU INTERFACE (ACCUEIL) --- */
     const renderUI = () => {
         const epContainer = document.getElementById('episodes-container');
         const artContainer = document.getElementById('articles-container');
@@ -127,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (artContainer) {
-            artContainer.innerHTML = articlesData.map((art) => `
+            artContainer.innerHTML = articlesData.map(art => `
                 <div class="article-row reveal visible">
-                    <span class="category-tag goudy" style="color: var(--terracotta);">${art.category}</span>
+                    <span class="category-tag goudy">${art.category}</span>
                     <h3 class="analysis-title broadway title-3d">${art.title}</h3>
                     <div style="display: flex; align-items: center; gap: 20px;">
                         <span class="font-comment">${art.duration}</span>
@@ -140,65 +133,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const formatTime = (seconds) => {
-        if (isNaN(seconds)) return "00:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    /* --- 4. FONCTIONS DU LECTEUR --- */
+    const formatTime = (s) => {
+        if (isNaN(s)) return "00:00";
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     };
 
     window.playAudio = (title, author, src) => {
         playerWidget.style.display = "block";
-        setTimeout(() => { playerWidget.classList.add('active'); }, 10);
-
+        setTimeout(() => playerWidget.classList.add('active'), 10);
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
         
         currentTrackIndex = episodesData.findIndex(ep => src.includes(ep.audio));
 
         let finalSrc = src;
-        if (window.location.pathname.includes('pages/')) {
-            if (!src.startsWith('../')) finalSrc = '../' + src;
-        } else {
-            finalSrc = src.replace('../', '');
-        }
+        if (window.location.pathname.includes('pages/') && !src.startsWith('../')) finalSrc = '../' + src;
 
         if (!coreAudio.src.includes(src.replace('../', ''))) {
             coreAudio.src = finalSrc;
             coreAudio.load();
         }
-
         coreAudio.play().then(() => {
             if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>";
         });
     };
 
+    window.togglePlayback = () => {
+        if (coreAudio.paused) { coreAudio.play(); playIcon.innerHTML = "<span>PAUSE</span>"; }
+        else { coreAudio.pause(); playIcon.innerHTML = "<span>PLAY</span>"; }
+    };
+
     window.nextTrack = () => {
-        if (episodesData.length === 0) return;
         currentTrackIndex = (currentTrackIndex + 1) % episodesData.length;
         const track = episodesData[currentTrackIndex];
         window.playAudio(track.title, track.author, track.audio);
     };
 
     window.prevTrack = () => {
-        if (episodesData.length === 0) return;
         currentTrackIndex = (currentTrackIndex - 1 + episodesData.length) % episodesData.length;
         const track = episodesData[currentTrackIndex];
         window.playAudio(track.title, track.author, track.audio);
     };
 
-    window.togglePlayback = () => {
-        if (coreAudio.paused) {
-            coreAudio.play();
-            playIcon.innerHTML = "<span>PAUSE</span>";
-        } else {
-            coreAudio.pause();
-            playIcon.innerHTML = "<span>PLAY</span>";
-        }
-    };
-
-    window.expandPlayer = () => { playerWidget.classList.toggle('expanded'); };
-
+    window.expandPlayer = () => playerWidget.classList.toggle('expanded');
     window.stopPlayer = () => {
         coreAudio.pause();
         playerWidget.classList.remove('active', 'expanded');
@@ -206,13 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.clear();
     };
 
-    coreAudio.addEventListener('timeupdate', () => {
-        if (audioRange && !isNaN(coreAudio.duration)) {
-            audioRange.value = (coreAudio.currentTime / coreAudio.duration) * 100;
-            currentTimeDisplay.innerText = formatTime(coreAudio.currentTime);
-            durationTimeDisplay.innerText = formatTime(coreAudio.duration);
-        }
-    });
+    if (coreAudio) {
+        coreAudio.addEventListener('timeupdate', () => {
+            if (audioRange && !isNaN(coreAudio.duration)) {
+                audioRange.value = (coreAudio.currentTime / coreAudio.duration) * 100;
+                currentTimeDisplay.innerText = formatTime(coreAudio.currentTime);
+                durationTimeDisplay.innerText = formatTime(coreAudio.duration);
+            }
+        });
+    }
 
     if (audioRange) {
         audioRange.addEventListener('input', () => {
@@ -220,72 +202,101 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* --- 5. PAGE CONTACT & FORMULAIRE --- */
     const initContactForm = () => {
         const form = document.getElementById("contactForm");
         const letter = document.getElementById("letter");
         const btn = document.getElementById("sendBtn");
+        if (!form) return;
 
-        if (form) {
-            form.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                btn.disabled = true;
-                btn.innerText = "EXPÉDITION...";
-                try {
-                    const response = await fetch("https://formspree.io/f/xojwddye", {
-                        method: 'POST',
-                        body: new FormData(e.target),
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    if (response.ok) {
-                        letter.classList.add('sent-status');
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.innerText = "EXPÉDITION...";
+            try {
+                const response = await fetch("https://formspree.io/f/xojwddye", {
+                    method: 'POST',
+                    body: new FormData(e.target),
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    letter.classList.add('sent-status');
+                    setTimeout(() => {
+                        letter.style.opacity = "0";
+                        letter.classList.remove('sent-status');
+                        form.reset();
+                        btn.innerText = "EXPÉDIER LA LETTRE";
+                        btn.disabled = false;
                         setTimeout(() => {
-                            letter.style.opacity = "0";
-                            letter.classList.remove('sent-status');
-                            form.reset();
-                            btn.innerText = "EXPÉDIER LA LETTRE";
-                            btn.disabled = false;
-                            setTimeout(() => {
-                                letter.style.opacity = "1";
-                                letter.classList.add('new-letter-arrival');
-                                setTimeout(() => { letter.classList.remove('new-letter-arrival'); }, 800);
-                            }, 300);
-                        }, 1400); 
-                    }
-                } catch (error) { btn.disabled = false; }
-            });
-        }
+                            letter.style.opacity = "1";
+                            letter.classList.add('new-letter-arrival');
+                            setTimeout(() => letter.classList.remove('new-letter-arrival'), 800);
+                        }, 300);
+                    }, 1400); 
+                }
+            } catch (error) { btn.disabled = false; }
+        });
     };
 
+    /* --- 6. NAVIGATION MOBILE (OPTIMISATION) --- */
     const handleNavbar = () => {
         const nav = document.getElementById('mainNavbar');
         const burgerBtn = document.getElementById('burgerBtn');
         const navLeft = document.querySelector('.nav-section.left');
+        const navLinks = document.querySelectorAll('.nav-item');
+
         window.addEventListener('scroll', () => {
             if (nav) {
-                nav.style.height = window.scrollY > 80 ? "90px" : "120px";
-                nav.style.background = window.scrollY > 80 ? "rgba(253, 245, 230, 0.98)" : "rgba(253, 245, 230, 0.75)";
+                // Colle au bord sans vide
+                nav.style.top = "0";
+                if (window.scrollY > 50) {
+                    nav.style.height = "70px";
+                    nav.style.background = "rgba(253, 245, 230, 0.98)";
+                } else {
+                    nav.style.height = "100px";
+                    nav.style.background = "rgba(253, 245, 230, 0.75)";
+                }
             }
         });
-        if (burgerBtn) {
+
+        if (burgerBtn && navLeft) {
             burgerBtn.onclick = () => {
                 burgerBtn.classList.toggle('open');
                 navLeft.classList.toggle('open');
+                document.body.style.overflow = navLeft.classList.contains('open') ? 'hidden' : 'auto';
             };
         }
+
+        // Fermeture automatique au clic sur un lien
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                burgerBtn?.classList.remove('open');
+                navLeft?.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+        });
     };
 
-    window.openLegal = () => { 
-        const m = document.getElementById('legalModal');
-        if(m) { m.style.display = 'flex'; m.style.opacity = "1"; }
-    };
-    window.closeLegal = () => { 
-        const m = document.getElementById('legalModal');
-        if(m) { m.style.display = 'none'; }
-    };
-
+    /* --- INITIALISATION --- */
     restorePlayer();
     renderUI();
     handleNavbar();
     initContactForm();
+    
+    // Débloque l'audio au premier clic (Anti-blocage navigateur)
+    document.addEventListener('click', () => {
+        if (sessionStorage.getItem("n_playing") === "true" && coreAudio.paused) {
+            coreAudio.play();
+        }
+    }, { once: true });
 });
 
+/* --- FONCTIONS GLOBALES (LÉGAL) --- */
+window.openLegal = () => { 
+    const m = document.getElementById('legalModal');
+    if(m) { m.style.display = 'flex'; m.style.opacity = "1"; }
+};
+window.closeLegal = () => { 
+    const m = document.getElementById('legalModal');
+    if(m) m.style.display = 'none'; 
+};
