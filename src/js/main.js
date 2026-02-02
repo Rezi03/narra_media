@@ -296,3 +296,15 @@ window.addEventListener('scroll', () => {
         }
     }
 });
+
+
+// À ajouter vers la fin de ton DOMContentLoaded dans main.js
+window.closeLegalOnDim = (event) => {
+    const modal = document.getElementById('legalModal');
+    // Si l'élément cliqué est exactement le fond noir (modal-backdrop)
+    // et non la boîte de contenu (modal-box), on ferme.
+    if (event.target === modal) {
+        window.closeLegal();
+    }
+};
+
