@@ -935,4 +935,15 @@ textarea {
     }
 }
 
+.spacer-section {
+    height: 150px; 
+    width: 100%;
+    background: transparent;
+    pointer-events: none; 
+}
 
+@media (max-width: 768px) {
+    .spacer-section {
+        height: 80px;
+    }
+}
