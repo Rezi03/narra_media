@@ -256,23 +256,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const handleNavbar = () => {
-        const nav = document.getElementById('mainNavbar');
-        const burgerBtn = document.getElementById('burgerBtn');
-        const navLeft = document.querySelector('.nav-section.left');
-        window.addEventListener('scroll', () => {
-            if (nav) {
-                nav.style.height = window.scrollY > 80 ? "90px" : "120px";
-                nav.style.background = window.scrollY > 80 ? "rgba(253, 245, 230, 0.98)" : "rgba(253, 245, 230, 0.75)";
-            }
-        });
-        if (burgerBtn) {
-            burgerBtn.onclick = () => {
-                burgerBtn.classList.toggle('open');
-                navLeft.classList.toggle('open');
-            };
-        }
-    };
+const handleNavbar = () => {
+    const burgerBtn = document.getElementById('burgerBtn');
+    // On sélectionne TOUTES les sections (gauche et droite)
+    const navSections = document.querySelectorAll('.nav-section'); 
+
+    if (burgerBtn) {
+        burgerBtn.onclick = () => {
+            burgerBtn.classList.toggle('open');
+            // On applique "open" à chaque section trouvée
+            navSections.forEach(section => {
+                section.classList.toggle('open');
+            });
+        };
+    }
+};
 
     window.openLegal = () => { 
         const m = document.getElementById('legalModal');
