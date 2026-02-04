@@ -142,8 +142,8 @@ body {
     left: 0;
     right: 0;
     width: 100%;
-    height: var(--nav-h);
-    background: rgba(253, 245, 230, 0.85);
+    height: calc(var(--nav-h) + env(safe-area-inset-top));
+    background: var(--ivoire);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     z-index: 1000;
@@ -944,7 +944,33 @@ textarea {
 }
 
 @media (max-width: 768px) {
-    .spacer-section {
-        height: 80px;
+    .nav-mobile-only {
+        display: flex !important;
+        position: fixed;
+        /* On utilise inset: 0 et on force la couverture totale */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%; 
+        height: -webkit-fill-available; /* Pour Safari Mobile */
+        height: 100dvh; /* Pour les navigateurs modernes */
+        
+        background: var(--ivoire) !important;
+        z-index: 5000;
+        transform: translateX(100%);
+        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        
+        /* On ajoute du padding en haut et en bas pour éviter les zones système */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        box-sizing: border-box;
+    }
+
+    /* Éviter que le contenu du site bouge derrière */
+    body.menu-open {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 }

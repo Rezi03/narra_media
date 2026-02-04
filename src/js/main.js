@@ -187,29 +187,27 @@ window.nextTrack = () => {
     };
 
     /* --- NAVIGATION & SCROLL --- */
-    const handleNavbar = () => {
-        const burgerBtn = document.getElementById('burgerBtn');
-        const mobileMenu = document.querySelector('.nav-mobile-only');
+const handleNavbar = () => {
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobileMenu = document.querySelector('.nav-mobile-only');
 
-        if (burgerBtn && mobileMenu) {
-            burgerBtn.onclick = (e) => {
-                e.preventDefault();
-                burgerBtn.classList.toggle('open');
-                mobileMenu.classList.toggle('open');
-                // Verrouillage du scroll pour Safari et Mobile
-                document.body.style.overflow = burgerBtn.classList.contains('open') ? 'hidden' : '';
-            };
-        }
+    if (burgerBtn && mobileMenu) {
+        burgerBtn.onclick = (e) => {
+            e.preventDefault();
+            const isOpen = burgerBtn.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
 
-        // Réduction de la nav au scroll (PC & Mobile)
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('mainNavbar');
-            if (nav) {
-                if (window.scrollY > 50) nav.classList.add('scrolled');
-                else nav.classList.remove('scrolled');
+            if (isOpen) {
+                document.body.classList.add('menu-open');
+                // Optionnel : empêche le "scroll bounce" sur iOS
+                document.documentElement.style.overflow = 'hidden';
+            } else {
+                document.body.classList.remove('menu-open');
+                document.documentElement.style.overflow = '';
             }
-        });
-    };
+        };
+    }
+};
 
     /* --- MODALE MENTIONS LÉGALES --- */
     window.openLegal = () => { 
