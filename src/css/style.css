@@ -818,159 +818,333 @@ textarea {
 
 
 
+/* ==========================================================================
+   VERSION FINALE CONSOLIDÉE : STRUCTURE FIXE, TEXTES & ÉLÉMENTS AFFINÉS
+   ========================================================================== */
 
-/* 1. COMPORTEMENT PAR DÉFAUT (HORS MOBILE) */
-.nav-mobile-only { 
-    display: none; 
-}
+.nav-mobile-only { display: none; }
 
-/* 2. BLOC UNIQUE POUR MOBILE (TABLETTES & TÉLÉPHONES) */
 @media (max-width: 768px) {
-    /* --- VARIABLES & NAVIGATION --- */
     :root { --nav-h: 80px; }
 
+    /* 1. FIX NAVIGATION : BLOQUÉE EN HAUT */
     .site-nav { 
-        height: var(--nav-h) !important; 
-        min-height: var(--nav-h);
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: var(--nav-h) !important;
         background: var(--ivoire) !important;
-        z-index: 4000;
-    }
-    
-    .nav-flex { 
-        padding: 0 20px; 
-        justify-content: space-between; 
+        z-index: 9999 !important;
+        padding: 0 !important;
+        margin: 0 !important;
         display: flex;
         align-items: center;
-        height: 100%;
+        border-bottom: 1px solid rgba(62, 39, 35, 0.1);
     }
 
-    /* Cache les anciens menus qui buggent */
-    .nav-section.left, .nav-section.right { 
-        display: none !important; 
+    .nav-flex {
+        padding: 0 25px !important;
+        width: 100% !important;
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
     }
 
-    .main-logo-img { height: 50px !important; }
+    .nav-section.left, .nav-section.right { display: none !important; }
+    .main-logo-img { height: 45px !important; animation: rotationLogo 15s linear infinite !important; }
 
-    /* --- LE BOUTON BURGER --- */
-    .mobile-burger { 
-        display: flex; 
-        z-index: 6000; /* Toujours au-dessus du panneau beige */
+    /* 2. MENU HAMBURGER : ONGLETS CENTRÉS */
+    .mobile-burger {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        width: 40px;
+        height: 40px;
+        z-index: 10001;
+        background: transparent;
+        border: none;
     }
-    .mobile-burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-    .mobile-burger.open span:nth-child(2) { transform: rotate(-45deg); }
+    .mobile-burger span { display: block; width: 30px; height: 2px; background-color: var(--brun) !important; }
 
-    /* --- LE PANNEAU BEIGE (PLEIN ÉCRAN) --- */
     .nav-mobile-only {
         display: flex !important;
-        position: fixed;
-        inset: 0; /* Prend les 4 coins de l'écran */
-        width: 100%;
-        height: 100vh;
-        height: 100dvh; /* FIX SAFARI : Bouche les trous blancs */
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100dvh !important;
         background: var(--ivoire) !important;
+        z-index: 10000 !important;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 35px; /* Espace entre les 4 boutons */
-        z-index: 5000;
-        transform: translateX(100%); /* Caché à droite par défaut */
-        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        padding: 0;
-        margin: 0;
+        gap: 35px;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     }
+    .nav-mobile-only.open { transform: translateX(0); }
 
-    /* Quand on clique sur le burger */
-    .nav-mobile-only.open {
-        transform: translateX(0);
-    }
-
-    /* Style des 4 liens : ÉNORMES et CENTRÉS */
     .nav-mobile-only .nav-item {
-        display: block !important;
         font-family: 'Broadway', sans-serif !important;
-        font-size: 2.5rem !important; 
-        letter-spacing: 3px;
-        text-align: center;
+        font-size: 1.8rem !important; 
         color: var(--brun) !important;
         text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    
-    .nav-mobile-only .nav-item:active {
-        color: var(--terracotta) !important;
     }
 
-    /* --- STRUCTURE DU RESTE DU SITE --- */
-    .container { padding: 0 20px; }
-    .hero-full { height: auto; padding: 140px 0 80px; }
-    .hero-description { font-size: 1.4rem; margin-bottom: 40px; }
-    .btn-primary-large { width: 100%; padding: 20px; }
-
-    .section-episodes, .section-manifeste, .section-analyses { padding: 80px 0; }
-    .episodes-chaotic-grid { grid-template-columns: 1fr; gap: 40px; }
-    .grid-manifeste { grid-template-columns: 1fr; gap: 40px; }
-    .manifeste-text { font-size: 1.5rem; }
-    .visual-placeholder { height: 300px; }
-
-    .article-row { grid-template-columns: 1fr; gap: 10px; padding-bottom: 30px; text-align: center; }
-    .analysis-title { font-size: 1.5rem; margin: 15px 0; }
-    .analysis-link { text-align: center; }
-
-    .footer-flex { flex-direction: column; gap: 30px; text-align: center; }
-
-    /* --- WIDGETS --- */
-    .player-widget.post-it-style { 
-        width: 100%; 
-        right: 0; bottom: 0; left: 0; 
-        border-radius: 15px 15px 0 0; 
-        transform: translateY(110%) !important; 
-        rotate: 0deg !important; 
-        z-index: 4500;
+    /* 3. VAGUES (TORN DIVIDERS) : RESTAURÉES ET FIXÉES */
+    .torn-divider {
+        width: 100vw !important;
+        left: 0 !important;
+        height: 50px !important;
+        background-color: inherit !important;
+        z-index: 20 !important;
+        pointer-events: none;
     }
-    .player-widget.active { transform: translateY(0) !important; }
-    
-    .modal-box { 
-        padding: 40px 20px; 
-        background-color: var(--ivoire) !important;
+    .divider-top { top: -49px !important; }
+    .divider-bottom { bottom: -49px !important; }
+
+    /* 4. TEXTES ET CONTENUS (SÉCURITÉ BORDS : 40px) */
+    .container {
+        padding-left: 40px !important; /* Augmenté pour garantir aucun collage */
+        padding-right: 40px !important; 
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
-}
 
+    /* RÉDUCTION DES TEXTES */
+    body, p, .goudy, .font-corpus { font-size: 1.15rem !important; }
 
-.spacer-section {
-    height: 150px; 
-    width: 100%;
-    background: transparent;
-    pointer-events: none; 
-}
-
-@media (max-width: 768px) {
-    .nav-mobile-only {
+    .article-row, .grid-manifeste, .episodes-chaotic-grid {
         display: flex !important;
-        position: fixed;
-        /* On utilise inset: 0 et on force la couverture totale */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%; 
-        height: -webkit-fill-available; /* Pour Safari Mobile */
-        height: 100dvh; /* Pour les navigateurs modernes */
-        
-        background: var(--ivoire) !important;
-        z-index: 5000;
-        transform: translateX(100%);
-        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        
-        /* On ajoute du padding en haut et en bas pour éviter les zones système */
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
-        box-sizing: border-box;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 35px !important;
+        padding: 20px 0 !important;
     }
 
-    /* Éviter que le contenu du site bouge derrière */
-    body.menu-open {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
+    h1, h2, .title-broadway, .hero-main-title {
+        font-size: 1.5rem !important;
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
     }
+
+    .analysis-title { font-size: 1.25rem !important; text-align: left; }
+    .manifeste-title { font-size: 1.25rem !important; }
+
+    /* 5. RÉDUCTION ENCADRÉ PHOTO (CADRE BLANC) & PHOTO LONGUE */
+    .visual-placeholder {
+        height: 450px !important; /* Image plus longue comme demandé */
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .paper-sheet { 
+        padding: 10px !important; 
+        width: 75% !important; /* Largeur de l'encadré réduite sur les côtés */
+        margin: 0 auto !important;
+        transform: rotate(0deg) !important; 
+    }
+
+    /* LA LETTRE (NE PAS TOUCHER) */
+    .air-mail-envelope {
+        padding: 25px !important;
+        max-width: 340px !important;
+        margin: 0 auto !important;
+        border-width: 8px !important;
+    }
+
+    /* 6. LECTEUR POST-IT : FIX DÉBORDEMENT */
+    .player-widget.post-it-style {
+        width: calc(100% - 40px) !important;
+        left: 20px !important;
+        right: 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* MENTIONS LÉGALES : SUPPRESSION CROIX */
+    .modal-close-btn { display: none !important; }
+
+    /* 7. BAS DE PAGE (FOOTER) RÉDUIT */
+    .site-footer { padding: 30px 0 !important; } /* Hauteur globale réduite */
+    .footer-flex {
+        flex-direction: column !important;
+        gap: 15px !important; 
+        text-align: center !important;
+        padding: 0 !important;
+    }
+    .footer-socials { justify-content: center; gap: 20px !important; }
+    .social-link img { height: 18px !important; } /* Icones sociales réduites */
+    .footer-copy p { font-size: 0.8rem !important; opacity: 0.7; }
+
+    /* 8. VERROUILLAGE ANTI-DÉBORDEMENT */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
+    
+    body.menu-open {
+        position: fixed !important;
+        width: 100% !important;
+    }
+
+    /* RÉDUCTION DES ESPACES HAUT/BAS (RESTEZ À L'ÉCOUTE) */
+    .newsletter-vertical-padding { 
+        padding-top: 40px !important;    /* Réduit l'espace au-dessus */
+        padding-bottom: 40px !important; /* Réduit l'espace en-dessous */
+        padding-left: 40px !important;   /* Sécurité : empêche de toucher le bord gauche */
+        padding-right: 40px !important;  /* Sécurité : empêche de toucher le bord droit */
+    }
+
+    .newsletter-block { 
+        padding-top: 20px !important;    /* Réduit l'espace interne en haut */
+        padding-bottom: 20px !important; /* Réduit l'espace interne en bas */
+    }
+
+    .spacer-section { 
+        height: 20px !important;         /* Supprime le grand vide blanc sous la section */
+    }
+
+    /* AJUSTEMENT DES ESPACES POUR LA SECTION L'INTENTION (MANIFESTE) */
+    
+    /* 1. Titre (L'intention) et Sous-titre (Laboratoire...) */
+    .label-section, 
+    .manifeste-title {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        display: block; /* Assure que le padding s'applique bien */
+    }
+
+    /* 2. Texte principal (Narra est né d'une volonté...) */
+    .manifeste-text {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    /* 3. Commentaire (Chaque épisode est une immersion...) */
+    .section-manifeste .font-comment {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        display: block;
+    }
+
+    /* 4. Bouton (Notre histoire) */
+    .manifeste-footer {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        margin-top: 20px !important;
+    }
+
+/* FIX COULEUR ET OPACITÉ ICÔNES FOOTER */
+
+    /* 1. On définit l'état normal (clair/gris selon ton design) */
+    .social-link img {
+        opacity: 0.5 !important; /* Ajuste cette valeur selon la clarté voulue de base */
+        filter: brightness(1) !important;
+        transition: all 0.3s ease-out !important;
+    }
+
+    /* 2. Effet visuel uniquement pendant la pression du doigt */
+    .social-link:active img {
+        opacity: 1 !important;     /* Devient bien visible/noir au clic */
+        transform: scale(1.2) !important;
+        transition: all 0.1s ease !important;
+    }
+
+    /* 3. On tue l'effet "bloqué" du hover sur mobile */
+    @media (hover: none) {
+        .social-link:hover img {
+            opacity: 0.5 !important; /* On force le retour à l'opacité de base */
+            transform: scale(1) !important;
+            filter: brightness(1) !important;
+        }
+    }
+
+}
+
+/* 1. Bouton "ÉCOUTER LE DERNIER ARTICLE" (Hero) */
+.btn-primary-large {
+    width: 80% !important;   /* Réduit la largeur (était à 100%) */
+    margin: 0 auto !important; /* Le centre */
+    padding: 12px 20px !important; /* Réduit la hauteur intérieure */
+    font-size: 0.8rem !important;  /* Texte un peu plus petit */
+}
+
+/* 2. Bouton "ENVOYER LA LETTRE" (Page Contact) */
+#sendBtn {
+    width: auto !important;      /* Ne prend plus toute la largeur */
+    min-width: 180px !important; /* Garde une taille minimale correcte */
+    padding: 10px 25px !important; 
+    font-size: 0.8rem !important;
+    margin: 20px auto 0 !important; /* Le centre en bas du formulaire */
+    display: block !important;
+}
+
+/* Ajustement pour que le groupe de boutons du Hero soit bien centré */
+.hero-btn-group {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* --- ÉTAT INITIAL --- */
+.site-nav {
+    transition: all 0.3s ease-in-out !important;
+    background-color: var(--ivoire) !important; /* Couleur fixe */
+}
+
+/* --- ÉTAT RÉDUIT (SCROLLED) --- */
+.site-nav.nav-scrolled {
+    height: 60px !important;
+    /* On force la même couleur que l'état initial */
+    background-color: var(--ivoire) !important; 
+    border-bottom: 1px solid rgba(62, 39, 35, 0.1);
+}
+
+/* --- ANNULATION DU RÉTRÉCISSEMENT QUAND LE MENU EST OUVERT --- */
+/* Si le body a la classe menu-open, on force la barre à reprendre sa taille normale */
+body.menu-open .site-nav {
+    height: var(--nav-h) !important;
+    background-color: var(--ivoire) !important;
+}
+
+/* On s'assure que le logo ne rétrécit pas non plus quand le menu est ouvert */
+body.menu-open .main-logo-img {
+    height: 45px !important;
+}
+
+/* --- ÉTAT RÉDUIT (SCROLLED) --- */
+
+/* On réduit la taille du logo quand on défile */
+.site-nav.nav-scrolled .main-logo-img {
+    height: 30px !important; /* Taille du logo réduit (ajuste selon tes goûts) */
+    width: auto !important;
+    transition: all 0.3s ease-in-out !important;
+}
+
+/* On s'assure que le logo reprend sa taille normale quand le menu est ouvert */
+body.menu-open .main-logo-img {
+    height: 45px !important;
+}
+
+/* Rend la barre de temps plus facile à attraper au doigt */
+.custom-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px !important; /* Plus épais pour le doigt */
+    background: rgba(62, 39, 35, 0.1);
+    border-radius: 5px;
+    outline: none;
+}
+
+.custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 25px !important; /* Un gros bouton pour le pouce */
+    height: 25px !important;
+    background: var(--terracotta);
+    border-radius: 50%;
+    cursor: pointer;
 }

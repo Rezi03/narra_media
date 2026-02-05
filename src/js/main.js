@@ -47,53 +47,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const durationTimeDisplay = document.getElementById('durationTime');
 
     /* --- LOGIQUE AUDIO & PLAYER --- */
-const restorePlayer = () => {
-    if (coreAudio && sessionStorage.getItem("n_src")) {
-        coreAudio.src = sessionStorage.getItem("n_src");
-        document.getElementById('trackTitle').innerText = sessionStorage.getItem("n_title");
-        document.getElementById('trackAuthor').innerText = sessionStorage.getItem("n_author");
-        
-        const savedTime = parseFloat(sessionStorage.getItem("n_time"));
-        
-        // IMPORTANT : On attend que le fichier soit chargé pour caler le temps
-        coreAudio.addEventListener('loadedmetadata', () => {
-            if (!isNaN(savedTime)) {
-                coreAudio.currentTime = savedTime;
-            }
-        }, { once: true });
 
-        if (sessionStorage.getItem("n_active") === "true") {
-            playerWidget.style.display = "block";
-            playerWidget.classList.add('active');
+// 1. On utilise localStorage pour une mémoire totale
+const restorePlayer = () => {
+        const savedSrc = localStorage.getItem("n_src");
+        const savedTime = localStorage.getItem("n_time");
+
+        if (coreAudio && savedSrc) {
+            coreAudio.src = savedSrc;
+            document.getElementById('trackTitle').innerText = localStorage.getItem("n_title") || "TITRE";
+            document.getElementById('trackAuthor').innerText = localStorage.getItem("n_author") || "AUTEUR";
             
-            if (sessionStorage.getItem("n_expanded") === "true") {
-                playerWidget.classList.add('expanded');
+            // On force l'affichage du temps texte immédiatement
+            if (savedTime) {
+                currentTimeDisplay.innerText = formatTime(parseFloat(savedTime));
             }
-            
-            // Sur mobile, on change juste l'icône, on ne force pas le .play()
-            if (sessionStorage.getItem("n_playing") === "true") {
-                if (playIcon) playIcon.innerHTML = "<span>PLAY</span>";
+
+            if (localStorage.getItem("n_active") === "true") {
+                playerWidget.style.display = "block";
+                playerWidget.classList.add('active');
+                if (localStorage.getItem("n_expanded") === "true") playerWidget.classList.add('expanded');
             }
         }
-    }
-};
+    };
 
-setInterval(() => {
-    // On ne sauvegarde que si le temps est un nombre valide et supérieur à 0
-    if (coreAudio && coreAudio.src && !isNaN(coreAudio.currentTime) && coreAudio.currentTime > 0) {
-        sessionStorage.setItem("n_src", coreAudio.src);
-        sessionStorage.setItem("n_time", coreAudio.currentTime);
-        sessionStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
-        sessionStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
-        sessionStorage.setItem("n_active", playerWidget.classList.contains('active'));
-        sessionStorage.setItem("n_expanded", playerWidget.classList.contains('expanded'));
-        sessionStorage.setItem("n_playing", !coreAudio.paused);
-    }
-}, 1000);
+    // 2. Sauvegarde ultra-précise
+    const saveState = () => {
+        if (coreAudio && coreAudio.src && !isNaN(coreAudio.currentTime) && coreAudio.currentTime > 0) {
+            localStorage.setItem("n_src", coreAudio.src);
+            localStorage.setItem("n_time", coreAudio.currentTime);
+            localStorage.setItem("n_title", document.getElementById('trackTitle').innerText);
+            localStorage.setItem("n_author", document.getElementById('trackAuthor').innerText);
+            localStorage.setItem("n_active", playerWidget.classList.contains('active'));
+            localStorage.setItem("n_expanded", playerWidget.classList.contains('expanded'));
+        }
+    };
 
-window.nextTrack = () => {
+coreAudio.addEventListener('loadedmetadata', () => {
+        const savedTime = localStorage.getItem("n_time");
+        if (savedTime && !isNaN(coreAudio.duration) && coreAudio.duration > 0) {
+            // Calcule le pourcentage réel et déplace la boule
+            const progress = (parseFloat(savedTime) / coreAudio.duration) * 100;
+            audioRange.value = progress;
+            durationTimeDisplay.innerText = formatTime(coreAudio.duration);
+        }
+    });
+
+    setInterval(saveState, 1000);
+
+    window.nextTrack = () => {
         if (episodesData.length === 0) return;
-        // On incrémente l'index ou on revient au début (0) si on dépasse la fin
         currentTrackIndex = (currentTrackIndex + 1) % episodesData.length;
         const track = episodesData[currentTrackIndex];
         window.playAudio(track.title, track.author, track.audio);
@@ -101,7 +104,6 @@ window.nextTrack = () => {
 
     window.prevTrack = () => {
         if (episodesData.length === 0) return;
-        // On recule l'index ou on repart de la fin si on est au début
         currentTrackIndex = (currentTrackIndex - 1 + episodesData.length) % episodesData.length;
         const track = episodesData[currentTrackIndex];
         window.playAudio(track.title, track.author, track.audio);
@@ -119,38 +121,75 @@ window.nextTrack = () => {
         setTimeout(() => { playerWidget.classList.add('active'); }, 10);
         document.getElementById('trackTitle').innerText = title.toUpperCase();
         document.getElementById('trackAuthor').innerText = author.toUpperCase();
+        
         currentTrackIndex = episodesData.findIndex(ep => src.includes(ep.audio));
+        
         let finalSrc = src;
-        if (window.location.pathname.includes('pages/')) { if (!src.startsWith('../')) finalSrc = '../' + src; }
-        else { finalSrc = src.replace('../', ''); }
-        if (!coreAudio.src.includes(src.replace('../', ''))) { coreAudio.src = finalSrc; coreAudio.load(); }
-        coreAudio.play().then(() => { if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>"; });
+        if (window.location.pathname.includes('pages/')) { 
+            if (!src.startsWith('../')) finalSrc = '../' + src; 
+        } else { 
+            finalSrc = src.replace('../', ''); 
+        }
+
+        if (!coreAudio.src.includes(src.replace('../', ''))) { 
+            coreAudio.src = finalSrc; 
+            coreAudio.load(); 
+        }
+        
+        coreAudio.play().then(() => { 
+            if (playIcon) playIcon.innerHTML = "<span>PAUSE</span>"; 
+        }).catch(e => console.log("Lecture auto bloquée"));
     };
 
+// 3. LA CORRECTION MOBILE : Calage au moment du clic
     window.togglePlayback = () => {
-        if (coreAudio.paused) { coreAudio.play(); playIcon.innerHTML = "<span>PAUSE</span>"; }
-        else { coreAudio.pause(); playIcon.innerHTML = "<span>PLAY</span>"; }
+        if (coreAudio.paused) {
+            const savedTime = parseFloat(localStorage.getItem("n_time"));
+            
+            // Si c'est le premier démarrage et qu'on a un temps sauvegardé
+            if (coreAudio.currentTime < 1 && savedTime > 0) {
+                coreAudio.currentTime = savedTime;
+            }
+
+            coreAudio.play().then(() => {
+                playIcon.innerHTML = "<span>PAUSE</span>";
+            }).catch(e => console.log("Erreur play"));
+        } else {
+            coreAudio.pause();
+            playIcon.innerHTML = "<span>PLAY</span>";
+        }
     };
 
     window.stopPlayer = () => {
         coreAudio.pause();
         playerWidget.classList.remove('active', 'expanded');
         playerWidget.style.display = "none";
-        sessionStorage.clear();
+        localStorage.clear();
     };
 
     window.expandPlayer = () => { playerWidget.classList.toggle('expanded'); };
 
-    coreAudio.addEventListener('timeupdate', () => {
+    const updateUIProgress = () => {
         if (audioRange && !isNaN(coreAudio.duration)) {
-            audioRange.value = (coreAudio.currentTime / coreAudio.duration) * 100;
+            const progress = (coreAudio.currentTime / coreAudio.duration) * 100;
+            audioRange.value = progress;
             currentTimeDisplay.innerText = formatTime(coreAudio.currentTime);
             durationTimeDisplay.innerText = formatTime(coreAudio.duration);
         }
-    });
+    };
 
+    coreAudio.addEventListener('timeupdate', updateUIProgress);
+
+    // Correction pour la barre de temps sur mobile (input + change)
     if (audioRange) {
-        audioRange.addEventListener('input', () => { coreAudio.currentTime = coreAudio.duration * (audioRange.value / 100); });
+        audioRange.addEventListener('input', () => {
+            if (!isNaN(coreAudio.duration)) {
+                coreAudio.currentTime = coreAudio.duration * (audioRange.value / 100);
+            }
+        });
+        // Pour éviter les sauts brutaux sur mobile lors du drag
+        audioRange.addEventListener('touchstart', () => coreAudio.pause());
+        audioRange.addEventListener('touchend', () => coreAudio.play());
     }
 
     /* --- RENDU UI --- */
@@ -187,27 +226,38 @@ window.nextTrack = () => {
     };
 
     /* --- NAVIGATION & SCROLL --- */
-const handleNavbar = () => {
-    const burgerBtn = document.getElementById('burgerBtn');
-    const mobileMenu = document.querySelector('.nav-mobile-only');
+    const handleNavbar = () => {
+        const burgerBtn = document.getElementById('burgerBtn');
+        const mobileMenu = document.querySelector('.nav-mobile-only');
 
-    if (burgerBtn && mobileMenu) {
-        burgerBtn.onclick = (e) => {
-            e.preventDefault();
-            const isOpen = burgerBtn.classList.toggle('open');
-            mobileMenu.classList.toggle('open');
+        if (burgerBtn && mobileMenu) {
+            burgerBtn.onclick = (e) => {
+                e.preventDefault();
+                const isOpen = burgerBtn.classList.toggle('open');
+                mobileMenu.classList.toggle('open');
 
-            if (isOpen) {
-                document.body.classList.add('menu-open');
-                // Optionnel : empêche le "scroll bounce" sur iOS
-                document.documentElement.style.overflow = 'hidden';
-            } else {
-                document.body.classList.remove('menu-open');
-                document.documentElement.style.overflow = '';
-            }
-        };
-    }
-};
+                if (isOpen) {
+                    document.body.classList.add('menu-open');
+                    document.documentElement.style.overflow = 'hidden';
+                } else {
+                    document.body.classList.remove('menu-open');
+                    document.documentElement.style.overflow = '';
+                }
+            };
+        }
+    };
+
+    /* --- EFFET STICKY NAV + LOGO --- */
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('mainNavbar');
+        const isMenuOpen = document.body.classList.contains('menu-open');
+
+        if (window.scrollY > 50 && !isMenuOpen) {
+            navbar.classList.add('nav-scrolled');
+        } else {
+            navbar.classList.remove('nav-scrolled');
+        }
+    });
 
     /* --- MODALE MENTIONS LÉGALES --- */
     window.openLegal = () => { 
@@ -222,7 +272,6 @@ const handleNavbar = () => {
 
     window.closeLegalOnDim = (event) => {
         const modal = document.getElementById('legalModal');
-        // Ferme si on clique sur le fond (le backdrop) uniquement
         if (event.target === modal) window.closeLegal();
     };
 
@@ -242,7 +291,11 @@ const handleNavbar = () => {
                         setTimeout(() => {
                             letter.style.opacity = "0"; letter.classList.remove('sent-status'); form.reset();
                             btn.innerText = "EXPÉDIER LA LETTRE"; btn.disabled = false;
-                            setTimeout(() => { letter.style.opacity = "1"; letter.classList.add('new-letter-arrival'); setTimeout(() => { letter.classList.remove('new-letter-arrival'); }, 800); }, 300);
+                            setTimeout(() => { 
+                                letter.style.opacity = "1"; 
+                                letter.classList.add('new-letter-arrival'); 
+                                setTimeout(() => { letter.classList.remove('new-letter-arrival'); }, 800); 
+                            }, 300);
                         }, 1400); 
                     }
                 } catch (error) { btn.disabled = false; }
@@ -251,8 +304,8 @@ const handleNavbar = () => {
     };
 
     /* --- INITIALISATION --- */
-    restorePlayer();
     renderUI();
     handleNavbar();
     initContactForm();
+    restorePlayer(); // Toujours à la fin pour être sûr que l'UI est là
 });
